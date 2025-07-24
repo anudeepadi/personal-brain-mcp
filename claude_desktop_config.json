@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "personal-brain": {
+      "command": "python",
+      "args": [
+        "/ABSOLUTE/PATH/TO/python-mcp/mcp_server.py"
+      ],
+      "env": {
+        "GOOGLE_API_KEY": "your_google_api_key",
+        "PINECONE_API_KEY": "your_pinecone_api_key", 
+        "PINECONE_INDEX_NAME": "your_index_name",
+        "ANTHROPIC_API_KEY": "your_anthropic_key"
+      }
+    }
+  }
+}
