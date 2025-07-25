@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "personal-brain-mcp"
+version = "1.0.0"
+description = "MCP Server for Personal Brain API - provides semantic search and archival capabilities for documents and chat sessions"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "Personal Brain MCP", email = "noreply@example.com"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+keywords = ["mcp", "claude", "ai", "semantic-search", "rag", "knowledge-base"]
+requires-python = ">=3.8"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "python-dotenv",
+    "pydantic-settings",
+    "langchain",
+    "langchain-google-genai",
+    "langchain-pinecone",
+    "pinecone",
+    "langchain-anthropic",
+    "langchain-core",
+    "PyPDF2",
+    "pytesseract",
+    "Pillow",
+    "SpeechRecognition",
+    "pydub",
+    "mcp",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "black",
+    "flake8",
+    "mypy",
+]
+
+[project.scripts]
+personal-brain-mcp = "personal_brain_mcp.server:main"
+
+[project.urls]
+Homepage = "https://github.com/your-username/personal-brain-mcp"
+Repository = "https://github.com/your-username/personal-brain-mcp"
+Issues = "https://github.com/your-username/personal-brain-mcp/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["personal_brain_mcp*"]
+
+[tool.setuptools.package-data]
+personal_brain_mcp = ["*.md", "*.json", "*.txt"]

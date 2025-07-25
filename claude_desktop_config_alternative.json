@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "personal-brain": {
+      "command": "/Users/vuc229/Downloads/Projects/python-mcp/start_mcp_server.sh",
+      "args": []
+    }
+  }
+}

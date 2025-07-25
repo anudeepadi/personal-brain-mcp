@@ -1,0 +1,48 @@
+{
+  "name": "personal-brain-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for Personal Brain API - AI-powered knowledge management for Claude Desktop",
+  "keywords": [
+    "mcp",
+    "ai",
+    "knowledge-management",
+    "claude",
+    "anthropic",
+    "rag",
+    "vector-search",
+    "personal-brain"
+  ],
+  "author": "Personal Brain MCP <contact@example.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/your-username/personal-brain-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/personal-brain-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/personal-brain-mcp/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "bin": {
+    "personal-brain-mcp": "./bin/personal-brain-mcp.js",
+    "pb-mcp": "./bin/personal-brain-mcp.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no tests specified\" && exit 1",
+    "postinstall": "node lib/install.js"
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.3",
+    "which": "^4.0.0"
+  },
+  "devDependencies": {},
+  "preferGlobal": true
+}

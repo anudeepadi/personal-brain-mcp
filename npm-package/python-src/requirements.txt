@@ -1,0 +1,22 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic-settings
+langchain
+langchain-google-genai
+langchain-pinecone
+pinecone # <-- This is the corrected line
+langchain-anthropic
+langchain-core
+PyPDF2
+
+# For image parsing
+pytesseract
+Pillow
+
+# For audio parsing
+SpeechRecognition
+pydub
+
+# For MCP server
+mcp

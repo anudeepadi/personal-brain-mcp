@@ -1,0 +1,8 @@
+include README.md
+include .env.example
+include requirements.txt
+include CLAUDE.md
+include claude_desktop_config.json
+recursive-include personal_brain_mcp *.py
+global-exclude __pycache__
+global-exclude *.py[co]

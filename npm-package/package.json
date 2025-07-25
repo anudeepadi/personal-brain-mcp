@@ -1,0 +1,55 @@
+{
+  "name": "personal-brain-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for Personal Brain API - provides semantic search and archival capabilities for documents and chat sessions",
+  "main": "bin/personal-brain-mcp.js",
+  "bin": {
+    "personal-brain-mcp": "./bin/personal-brain-mcp.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install-python-deps.js",
+    "preuninstall": "node scripts/cleanup.js",
+    "test": "node scripts/test.js"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "ai",
+    "semantic-search",
+    "rag",
+    "knowledge-base",
+    "python",
+    "fastapi",
+    "pinecone",
+    "langchain"
+  ],
+  "author": "Personal Brain MCP",
+  "license": "MIT",
+  "homepage": "https://github.com/your-username/personal-brain-mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/personal-brain-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/personal-brain-mcp/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "files": [
+    "bin/",
+    "scripts/",
+    "README.md",
+    "python-src/"
+  ],
+  "preferGlobal": true,
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {}
+}

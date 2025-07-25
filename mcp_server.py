@@ -10,10 +10,9 @@ import logging
 from typing import Any, Dict, List
 from datetime import datetime
 from mcp.server.fastmcp import FastMCP
-from mcp.server.models import TextContent
-from mcp.types import Tool, Resource
 
 # Import our services
+import json
 from services import (
     search_documents_enhanced,
     search_archived_chats_enhanced,
@@ -23,15 +22,29 @@ from services import (
     generate_enhanced_response,
     parse_pdf,
     parse_image,
-    parse_audio
+    parse_audio,
+    # Chat management functions
+    parse_chat_export,
+    save_chat_conversation,
+    retrieve_chat_conversations,
+    get_saved_chats_list,
+    process_save_chat_command,
+    process_retrieve_chat_command
 )
-from main import DocumentMetadata, SearchResult, EnhancedChatResponse
+from models import DocumentMetadata, SearchResult, EnhancedChatResponse, SaveChatRequest, ChatMessage
 import io
 
 # Configure logging for MCP (avoid stdout)
+import os
+import tempfile
+
+# Use a writable directory for log files
+log_dir = os.path.expanduser('~/Documents') if os.path.exists(os.path.expanduser('~/Documents')) else tempfile.gettempdir()
+log_file = os.path.join(log_dir, 'mcp_server.log')
+
 logging.basicConfig(
     level=logging.INFO,
-    handlers=[logging.FileHandler('mcp_server.log')],
+    handlers=[logging.FileHandler(log_file, mode='a')],
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
@@ -223,6 +236,204 @@ async def ask_with_citations(
         logging.error(f"Error in ask_with_citations: {e}")
         return {"error": f"Failed to generate response: {str(e)}"}
 
+# --- CHAT MANAGEMENT TOOLS ---
+
+@mcp.tool()
+async def save_chat(
+    chat_id: str,
+    messages: List[Dict[str, str]],
+    title: str = None,
+    tags: str = ""
+) -> Dict[str, Any]:
+    """
+    Save a chat conversation to your personal knowledge base.
+    
+    Args:
+        chat_id: Unique identifier for the chat
+        messages: List of messages with 'role' and 'content' keys
+        title: Optional title for the chat
+        tags: Comma-separated tags for categorization
+    
+    Returns:
+        Save confirmation with chat details
+    """
+    try:
+        # Convert dict messages to ChatMessage objects
+        chat_messages = [
+            ChatMessage(role=msg.get("role", "user"), content=msg.get("content", ""))
+            for msg in messages if msg.get("content")
+        ]
+        
+        if not chat_messages:
+            return {"error": "No valid messages provided"}
+        
+        tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()] if tags else []
+        
+        result = await save_chat_conversation(
+            chat_id=chat_id,
+            title=title,
+            messages=chat_messages,
+            tags=tag_list or ["mcp_saved"],
+            metadata={"saved_via": "mcp_tool"}
+        )
+        
+        return {
+            "message": f"Chat saved successfully as '{result['title']}'",
+            "chat_id": result["chat_id"],
+            "title": result["title"],
+            "message_count": result["message_count"]
+        }
+    except Exception as e:
+        logging.error(f"Error in save_chat: {e}")
+        return {"error": f"Failed to save chat: {str(e)}"}
+
+@mcp.tool()
+async def retrieve_saved_chats(
+    chat_id: str = None,
+    title_pattern: str = None,
+    tags: str = "",
+    limit: int = 10
+) -> List[Dict[str, Any]]:
+    """
+    Retrieve saved chat conversations from your knowledge base.
+    
+    Args:
+        chat_id: Specific chat ID to retrieve
+        title_pattern: Search by title pattern
+        tags: Comma-separated tags to filter by
+        limit: Maximum number of chats to return (1-20)
+    
+    Returns:
+        List of matching chat conversations
+    """
+    try:
+        tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()] if tags else []
+        
+        chats = await retrieve_chat_conversations(
+            chat_id=chat_id,
+            title_pattern=title_pattern,
+            tags=tag_list,
+            limit=min(max(limit, 1), 20)
+        )
+        
+        return chats
+    except Exception as e:
+        logging.error(f"Error in retrieve_saved_chats: {e}")
+        return [{"error": f"Failed to retrieve chats: {str(e)}"}]
+
+@mcp.tool()
+async def list_saved_chats(
+    skip: int = 0,
+    limit: int = 10,
+    tags: str = ""
+) -> List[Dict[str, Any]]:
+    """
+    List all saved chat conversations with metadata.
+    
+    Args:
+        skip: Number of chats to skip (pagination)
+        limit: Maximum number of chats to return (1-50)
+        tags: Comma-separated tags to filter by
+    
+    Returns:
+        List of saved chats with metadata
+    """
+    try:
+        tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()] if tags else []
+        
+        chats = await get_saved_chats_list(
+            skip=max(skip, 0),
+            limit=min(max(limit, 1), 50),
+            tags=tag_list
+        )
+        
+        return [
+            {
+                "chat_id": chat.chat_id,
+                "title": chat.title,
+                "message_count": chat.message_count,
+                "last_updated": chat.last_updated.isoformat(),
+                "tags": chat.tags,
+                "preview": chat.preview
+            } for chat in chats
+        ]
+    except Exception as e:
+        logging.error(f"Error in list_saved_chats: {e}")
+        return [{"error": f"Failed to list chats: {str(e)}"}]
+
+@mcp.tool()
+async def import_chat_export(
+    file_content: str,
+    filename: str = "export.json",
+    export_type: str = "auto",
+    title: str = None,
+    tags: str = ""
+) -> Dict[str, Any]:
+    """
+    Import a chat export file from Claude or ChatGPT.
+    
+    Args:
+        file_content: The content of the export file
+        filename: Name of the export file
+        export_type: Type of export ('claude', 'chatgpt', 'auto')
+        title: Optional custom title
+        tags: Comma-separated tags
+    
+    Returns:
+        Import result with chat details
+    """
+    try:
+        tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()] if tags else []
+        
+        result = await parse_chat_export(
+            file_content=file_content.encode('utf-8'),
+            filename=filename,
+            export_type=export_type,
+            title=title,
+            tags=tag_list or ["imported_via_mcp"]
+        )
+        
+        return {
+            "message": "Chat export imported successfully",
+            "chat_id": result["chat_id"],
+            "title": result["title"],
+            "total_messages": result["message_count"],
+            "detected_format": result["detected_format"]
+        }
+    except Exception as e:
+        logging.error(f"Error in import_chat_export: {e}")
+        return {"error": f"Failed to import chat export: {str(e)}"}
+
+@mcp.tool()
+async def process_chat_command(
+    command: str,
+    context: str = ""
+) -> Dict[str, Any]:
+    """
+    Process save_chat or retrieve_chat commands from user input.
+    
+    Args:
+        command: The chat command (e.g., "save_chat as 'My Chat'", "retrieve_chat with tags ai")
+        context: Current conversation context for save_chat commands
+    
+    Returns:
+        Command execution result
+    """
+    try:
+        command_lower = command.lower().strip()
+        
+        if command_lower.startswith("save_chat"):
+            result = await process_save_chat_command(command, context)
+            return result
+        elif command_lower.startswith("retrieve_chat"):
+            result = await process_retrieve_chat_command(command)
+            return result
+        else:
+            return {"error": "Unknown command. Use 'save_chat' or 'retrieve_chat'"}
+    except Exception as e:
+        logging.error(f"Error in process_chat_command: {e}")
+        return {"error": f"Failed to process command: {str(e)}"}
+
 # Resources for Claude Desktop to access
 
 @mcp.resource("documents://list")
@@ -278,6 +489,39 @@ async def search_documents_resource(query: str) -> str:
     except Exception as e:
         logging.error(f"Error in search_documents_resource: {e}")
         return json.dumps({"error": f"Search failed: {str(e)}"})
+
+@mcp.resource("chats://saved")
+async def saved_chats_resource() -> str:
+    """Access to all saved chats."""
+    try:
+        chats = await get_saved_chats_list(limit=50)
+        formatted_chats = [
+            {
+                "chat_id": chat.chat_id,
+                "title": chat.title,
+                "message_count": chat.message_count,
+                "last_updated": chat.last_updated.isoformat(),
+                "tags": chat.tags,
+                "preview": chat.preview
+            } for chat in chats
+        ]
+        return json.dumps(formatted_chats, indent=2, default=str)
+    except Exception as e:
+        logging.error(f"Error in saved_chats_resource: {e}")
+        return json.dumps({"error": f"Failed to load saved chats: {str(e)}"})
+
+@mcp.resource("chats://{chat_id}")
+async def specific_chat_resource(chat_id: str) -> str:
+    """Access to a specific saved chat."""
+    try:
+        chats = await retrieve_chat_conversations(chat_id=chat_id, limit=1)
+        if not chats:
+            return json.dumps({"error": "Chat not found"})
+        
+        return json.dumps(chats[0], indent=2, default=str)
+    except Exception as e:
+        logging.error(f"Error in specific_chat_resource: {e}")
+        return json.dumps({"error": f"Failed to retrieve chat: {str(e)}"})
 
 def main():
     """Run the MCP server."""
