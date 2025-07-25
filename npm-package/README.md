@@ -122,7 +122,7 @@ You'll need API keys from:
 
 ## Support
 
-- GitHub Issues: https://github.com/your-username/personal-brain-mcp/issues
+- GitHub Issues: https://github.com/anudeepadi/personal-brain-mcp/issues
 - Documentation: See README.md in the Python package
 
 ## License

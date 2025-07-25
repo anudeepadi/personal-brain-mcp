@@ -25,13 +25,13 @@
   ],
   "author": "Personal Brain MCP",
   "license": "MIT",
-  "homepage": "https://github.com/your-username/personal-brain-mcp",
+  "homepage": "https://github.com/anudeepadi/personal-brain-mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/personal-brain-mcp.git"
+    "url": "https://github.com/anudeepadi/personal-brain-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/personal-brain-mcp/issues"
+    "url": "https://github.com/anudeepadi/personal-brain-mcp/issues"
   },
   "engines": {
     "node": ">=16.0.0"
