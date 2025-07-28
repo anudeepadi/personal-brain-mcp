@@ -58,9 +58,9 @@ dev = [
 personal-brain-mcp = "personal_brain_mcp.server:main"
 
 [project.urls]
-Homepage = "https://github.com/your-username/personal-brain-mcp"
-Repository = "https://github.com/your-username/personal-brain-mcp"
-Issues = "https://github.com/your-username/personal-brain-mcp/issues"
+Homepage = "https://github.com/anudeepadi/personal-brain-mcp"
+Repository = "https://github.com/anudeepadi/personal-brain-mcp"
+Issues = "https://github.com/anudeepadi/personal-brain-mcp/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -125,4 +125,4 @@ MIT License
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request at https://github.com/anudeepadi/personal-brain-mcp
