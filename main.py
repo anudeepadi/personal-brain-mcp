@@ -3,8 +3,10 @@ import mimetypes
 from typing import Literal
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Query
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 # Import models from separate module to avoid circular imports
 from models import (
     ChatMessage, DocumentReference, SearchResult, EnhancedChatResponse,
@@ -21,7 +23,12 @@ from services import (
     # Enhanced functions
     process_and_store_enhanced, search_archived_chats_enhanced,
     search_documents_enhanced, get_all_documents,
-    get_document_with_chunks, generate_enhanced_response
+    get_document_with_chunks, generate_enhanced_response,
+    # Chat management functions
+    parse_chat_export, save_chat_conversation,
+    retrieve_chat_conversations, get_saved_chats_list,
+    delete_saved_chat, process_save_chat_command,
+    process_retrieve_chat_command
 )
 
 app = FastAPI(
@@ -38,11 +45,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files
+frontend_path = Path(__file__).parent / "frontend"
+if frontend_path.exists():
+    app.mount("/frontend", StaticFiles(directory=str(frontend_path)), name="frontend")
 
-@app.get("/", summary="Check API status")
+
+@app.get("/", summary="Serve frontend UI")
 def root():
-    """Health check endpoint."""
+    """Serve the frontend HTML page."""
+    index_path = Path(__file__).parent / "frontend" / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path))
     return {"status": "ok", "message": "Welcome to your Personal Brain API!"}
+
+@app.get("/api/health", summary="Check API status")
+def health():
+    """Health check endpoint."""
+    return {"status": "ok", "message": "Personal Brain API is running!"}
 
 
 @app.post("/archive/chat", summary="Archive a chat session")

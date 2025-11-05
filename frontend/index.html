@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Brain - AI-Powered Knowledge Base</title>
+    <link rel="stylesheet" href="/frontend/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🧠</span>
+                <span class="logo-text">Personal Brain</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#chat" class="nav-link">Chat</a>
+                <a href="#documents" class="nav-link">Documents</a>
+                <a href="#search" class="nav-link">Search</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Your AI-powered
+                <span class="gradient-text">second brain</span>
+            </h1>
+            <p class="hero-subtitle">
+                Store, search, and chat with your knowledge.
+                Upload documents, archive conversations, and unlock insights with semantic search.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary" onclick="scrollToSection('chat')">
+                    Start Chatting
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="btn btn-secondary" onclick="scrollToSection('documents')">
+                    Upload Documents
+                </button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-card card-1">
+                <div class="card-icon">📄</div>
+                <div class="card-text">Documents</div>
+            </div>
+            <div class="floating-card card-2">
+                <div class="card-icon">💬</div>
+                <div class="card-text">Chat</div>
+            </div>
+            <div class="floating-card card-3">
+                <div class="card-icon">🔍</div>
+                <div class="card-text">Search</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="section-header">
+            <h2 class="section-title">Powerful Features</h2>
+            <p class="section-subtitle">Everything you need to manage your knowledge</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3 class="feature-title">AI Chat</h3>
+                <p class="feature-description">Chat with your documents using advanced AI models. Get answers with citations and references.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3 class="feature-title">Document Management</h3>
+                <p class="feature-description">Upload PDFs, images, audio files, and text. Automatic processing and indexing.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔎</div>
+                <h3 class="feature-title">Semantic Search</h3>
+                <p class="feature-description">Find information using natural language. Powered by vector embeddings.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <h3 class="feature-title">Chat Archive</h3>
+                <p class="feature-description">Save and retrieve conversations. Import from Claude and ChatGPT.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Section -->
+    <section id="chat" class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">Chat with Your Knowledge</h2>
+            <p class="section-subtitle">Ask questions and get AI-powered answers with citations</p>
+        </div>
+        <div class="chat-container">
+            <div class="chat-settings">
+                <div class="setting-group">
+                    <label for="model-select">AI Model</label>
+                    <select id="model-select" class="select-input">
+                        <option value="gemini">Gemini</option>
+                        <option value="claude">Claude</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="citations-toggle" checked>
+                        <span>Include Citations</span>
+                    </label>
+                </div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">👋</div>
+                    <h3>Welcome to Personal Brain</h3>
+                    <p>Ask me anything about your uploaded documents</p>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <textarea
+                    id="chat-input"
+                    class="chat-input"
+                    placeholder="Ask a question about your documents..."
+                    rows="1"
+                ></textarea>
+                <button id="send-btn" class="send-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documents Section -->
+    <section id="documents" class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">Document Management</h2>
+            <p class="section-subtitle">Upload and manage your knowledge base</p>
+        </div>
+        <div class="documents-container">
+            <div class="upload-area" id="upload-area">
+                <div class="upload-content">
+                    <div class="upload-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Drop files here or click to upload</h3>
+                    <p>Supports PDF, images, audio, and text files</p>
+                    <input type="file" id="file-input" hidden multiple accept=".pdf,.txt,.jpg,.jpeg,.png,.mp3,.wav,.m4a">
+                    <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                        Select Files
+                    </button>
+                </div>
+            </div>
+            <div class="documents-list">
+                <div class="list-header">
+                    <h3>Uploaded Documents</h3>
+                    <button class="btn btn-text" onclick="loadDocuments()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M1 4V10H7M23 20V14H17M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14L18.36 18.36A9 9 0 0 1 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+                <div id="documents-grid" class="documents-grid">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading documents...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section id="search" class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">Semantic Search</h2>
+            <p class="section-subtitle">Find information across all your knowledge</p>
+        </div>
+        <div class="search-container">
+            <div class="search-input-container">
+                <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                    <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Search your knowledge base..."
+                >
+                <button id="search-btn" class="btn btn-primary">Search</button>
+            </div>
+            <div class="search-filters">
+                <select id="search-type" class="select-input">
+                    <option value="documents">Documents</option>
+                    <option value="chats">Chat History</option>
+                </select>
+                <input
+                    type="number"
+                    id="search-limit"
+                    class="number-input"
+                    value="5"
+                    min="1"
+                    max="20"
+                    placeholder="Results"
+                >
+            </div>
+            <div id="search-results" class="search-results">
+                <div class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <h3>Start Searching</h3>
+                    <p>Enter a query to find relevant information</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Personal Brain. Powered by AI.</p>
+            <div class="footer-links">
+                <a href="https://github.com" target="_blank">GitHub</a>
+                <a href="#" onclick="scrollToSection('home')">Back to Top</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/frontend/js/app.js"></script>
+</body>
+</html>
