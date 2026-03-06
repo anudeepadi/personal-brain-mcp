@@ -1,71 +1,60 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* ──────────────────────────────────────────────
    System 1 (Waking / Light) — warm, off-white
    ────────────────────────────────────────────── */
-@layer base {
-  :root {
-    --background: #FEFCF8;
-    --surface: #FFFFFF;
-    --text-primary: #1A1A1A;
-    --text-secondary: #6B6B6B;
-    --accent: #E8A04C;
-    --accent-secondary: #4A90D9;
-    --border: #E8E4DE;
-    --danger: #F87171;
+:root {
+  --background: #FEFCF8;
+  --surface: #FFFFFF;
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --accent: #E8A04C;
+  --accent-secondary: #4A90D9;
+  --border: #E8E4DE;
+  --danger: #F87171;
 
-    /* shadcn compat tokens */
-    --foreground: var(--text-primary);
-    --card: var(--surface);
-    --card-foreground: var(--text-primary);
-    --muted: #F5F0EA;
-    --muted-foreground: var(--text-secondary);
-    --ring: var(--accent);
-    --radius: 0.75rem;
-  }
-
-  /* ──────────────────────────────────────────
-     System 2 (Sleep / Dark) — deep navy
-     ────────────────────────────────────────── */
-  .dark {
-    --background: #0A0E1A;
-    --surface: #111827;
-    --text-primary: #E5E7EB;
-    --text-secondary: #9CA3AF;
-    --accent: #818CF8;
-    --accent-secondary: #34D399;
-    --border: #1F2937;
-    --danger: #F87171;
-
-    --foreground: var(--text-primary);
-    --card: var(--surface);
-    --card-foreground: var(--text-primary);
-    --muted: #1F2937;
-    --muted-foreground: var(--text-secondary);
-    --ring: var(--accent);
-  }
+  /* shadcn compat tokens */
+  --foreground: var(--text-primary);
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+  --muted: #F5F0EA;
+  --muted-foreground: var(--text-secondary);
+  --ring: var(--accent);
+  --radius: 0.75rem;
 }
 
-@layer base {
-  * {
-    border-color: var(--border);
-  }
-  body {
-    background-color: var(--background);
-    color: var(--text-primary);
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
+/* ──────────────────────────────────────────
+   System 2 (Sleep / Dark) — deep navy
+   ────────────────────────────────────────── */
+.dark {
+  --background: #0A0E1A;
+  --surface: #111827;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --accent: #818CF8;
+  --accent-secondary: #34D399;
+  --border: #1F2937;
+  --danger: #F87171;
+
+  --foreground: var(--text-primary);
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+  --muted: #1F2937;
+  --muted-foreground: var(--text-secondary);
+  --ring: var(--accent);
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-feature-settings: "rlig" 1, "calt" 1;
 }
 
 /* ── Utility Classes ─────────────────────────── */
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
 
 .gradient-text {
   background: linear-gradient(135deg, var(--accent), var(--accent-secondary));

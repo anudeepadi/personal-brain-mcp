@@ -15,7 +15,11 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" as const },
+  },
 };
 
 function Particles() {
@@ -38,7 +42,12 @@ function Particles() {
         <motion.div
           key={dot.id}
           className="absolute rounded-full bg-[#E8A04C]/20"
-          style={{ left: dot.left, top: dot.top, width: dot.size, height: dot.size }}
+          style={{
+            left: dot.left,
+            top: dot.top,
+            width: dot.size,
+            height: dot.size,
+          }}
           animate={{ y: [0, -30, 0], opacity: [0.2, 0.6, 0.2] }}
           transition={{
             duration: dot.duration,
@@ -89,7 +98,10 @@ export function HeroSection() {
           intelligent consolidation offline.
         </motion.p>
 
-        <motion.div variants={itemVariants} className="flex items-center justify-center gap-4 flex-wrap">
+        <motion.div
+          variants={itemVariants}
+          className="flex items-center justify-center gap-4 flex-wrap"
+        >
           <Link
             href="/brain"
             className="inline-flex items-center px-8 py-3 rounded-xl bg-[#E8A04C] text-white font-semibold text-base shadow-lg hover:shadow-xl hover:bg-[#d4902f] transition-all duration-200"

@@ -83,8 +83,12 @@ function StageCard({ stage, index }: { stage: Stage; index: number }) {
 
       <div className="flex-1">
         <h3 className="text-xl font-bold text-[#E5E7EB] mb-1">{stage.label}</h3>
-        <p className="text-xs font-mono text-[#818CF8] mb-2">{stage.sublabel}</p>
-        <p className="text-sm text-[#9CA3AF] leading-relaxed">{stage.description}</p>
+        <p className="text-xs font-mono text-[#818CF8] mb-2">
+          {stage.sublabel}
+        </p>
+        <p className="text-sm text-[#9CA3AF] leading-relaxed">
+          {stage.description}
+        </p>
       </div>
     </motion.div>
   );
@@ -122,7 +126,7 @@ export function ArchitectureSection() {
             className="absolute left-7 top-0 bottom-0 w-px hidden md:block"
           >
             <motion.div
-              className="w-full h-full"
+              className="w-full h-full origin-top"
               style={{
                 background:
                   "linear-gradient(to bottom, #34D399, #818CF8, #818CF8, #34D399)",
@@ -130,7 +134,6 @@ export function ArchitectureSection() {
               initial={{ scaleY: 0 }}
               animate={lineInView ? { scaleY: 1 } : undefined}
               transition={{ duration: 1.2, ease: "easeOut" }}
-              className="origin-top"
             />
           </div>
 
