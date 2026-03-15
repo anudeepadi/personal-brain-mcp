@@ -83,81 +83,112 @@ export default function BrainPage() {
     memory.reset();
   }, [memory]);
 
+  const eventCount = memory.events.length;
+
   return (
-    <div className="h-[calc(100vh-4rem)]">
-      <Group orientation="horizontal">
-        {/* Left sidebar — chat history */}
-        {!sidebarCollapsed && (
-          <>
-            <Panel defaultSize={18} minSize={14} maxSize={25}>
-              <ChatSidebar
-                onNewChat={handleNewChat}
-                onSelectChat={() => {
-                  /* mock — no-op for now */
-                }}
-              />
-            </Panel>
-            <Separator className="w-px bg-border hover:w-[2px] hover:bg-accent/40 transition-all duration-200 cursor-col-resize" />
-          </>
-        )}
+    <div className="flex flex-col h-[calc(100vh-3.5rem)]">
+      {/* MCP status bar */}
+      <div className="shrink-0 h-8 bg-surface border-b border-border flex items-center px-4 gap-3">
+        <span className="flex items-center gap-1.5">
+          <span className="size-1.5 rounded-full bg-success" />
+          <span className="font-mono text-[10px] text-text-tertiary">
+            MCP Connected
+          </span>
+        </span>
+        <span className="text-border-strong text-[10px]">·</span>
+        <span className="font-mono text-[10px] text-text-tertiary">
+          Pinecone
+        </span>
+        <span className="text-border-strong text-[10px]">·</span>
+        <span className="font-mono text-[10px] text-text-tertiary">
+          Gemini Flash
+        </span>
+        <span className="text-border-strong text-[10px]">·</span>
+        <span className="font-mono text-[10px] text-text-tertiary">
+          {eventCount} event{eventCount !== 1 ? "s" : ""} in stream
+        </span>
+      </div>
 
-        {/* Center — chat panel */}
-        <Panel defaultSize={sidebarCollapsed ? 60 : 47} minSize={30}>
-          <div className="flex flex-col h-full">
-            {/* Collapse toggle */}
-            <div className="shrink-0 h-0 relative">
-              <button
-                onClick={() => setSidebarCollapsed((prev) => !prev)}
-                className="absolute top-3 left-2 z-10 w-6 h-6 rounded border border-border flex items-center justify-center text-text-tertiary hover:text-text-secondary hover:bg-surface transition-colors text-xs md:hidden"
-                aria-label={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
-              >
-                {sidebarCollapsed ? "›" : "‹"}
-              </button>
-            </div>
-            <ChatPanel messages={messages} onSendMessage={handleSendMessage} />
-          </div>
-        </Panel>
-
-        <Separator className="w-px bg-border hover:w-[2px] hover:bg-accent/40 transition-all duration-200 cursor-col-resize" />
-
-        {/* Right area — tabs: Widgets | Dashboard */}
-        <Panel defaultSize={sidebarCollapsed ? 40 : 35} minSize={25}>
-          <div className="flex flex-col h-full bg-surface">
-            {/* Tab bar */}
-            <div className="shrink-0 flex border-b border-border">
-              <TabButton
-                label="Widgets"
-                active={rightTab === "widgets"}
-                onClick={() => setRightTab("widgets")}
-              />
-              <TabButton
-                label="Dashboard"
-                active={rightTab === "dashboard"}
-                onClick={() => setRightTab("dashboard")}
-              />
-            </div>
-
-            {/* Tab content */}
-            <div className="flex-1 overflow-hidden">
-              {rightTab === "widgets" ? (
-                <WidgetsSidebar compiledMemory={memory.compiledMemory} />
-              ) : (
-                <MemoryDashboard
-                  events={memory.events}
-                  nodes={memory.nodes}
-                  edges={memory.edges}
-                  compiledMemory={memory.compiledMemory}
-                  isConsolidating={memory.isConsolidating}
-                  contradictionsResolved={
-                    memory.lastConsolidation?.contradictionsResolved ?? 0
-                  }
-                  onConsolidate={handleConsolidate}
+      <div className="flex-1 overflow-hidden">
+        <Group orientation="horizontal">
+          {/* Left sidebar — chat history */}
+          {!sidebarCollapsed && (
+            <>
+              <Panel defaultSize={18} minSize={14} maxSize={25}>
+                <ChatSidebar
+                  onNewChat={handleNewChat}
+                  onSelectChat={() => {
+                    /* mock — no-op for now */
+                  }}
                 />
-              )}
+              </Panel>
+              <Separator className="w-px bg-border hover:w-[2px] hover:bg-accent/40 transition-all duration-200 cursor-col-resize" />
+            </>
+          )}
+
+          {/* Center — chat panel */}
+          <Panel defaultSize={sidebarCollapsed ? 60 : 47} minSize={30}>
+            <div className="flex flex-col h-full">
+              {/* Collapse toggle */}
+              <div className="shrink-0 h-0 relative">
+                <button
+                  onClick={() => setSidebarCollapsed((prev) => !prev)}
+                  className="absolute top-3 left-2 z-10 w-6 h-6 rounded border border-border flex items-center justify-center text-text-tertiary hover:text-text-secondary hover:bg-surface transition-colors text-xs md:hidden"
+                  aria-label={
+                    sidebarCollapsed ? "Show sidebar" : "Hide sidebar"
+                  }
+                >
+                  {sidebarCollapsed ? "›" : "‹"}
+                </button>
+              </div>
+              <ChatPanel
+                messages={messages}
+                onSendMessage={handleSendMessage}
+              />
             </div>
-          </div>
-        </Panel>
-      </Group>
+          </Panel>
+
+          <Separator className="w-px bg-border hover:w-[2px] hover:bg-accent/40 transition-all duration-200 cursor-col-resize" />
+
+          {/* Right area — tabs: Widgets | Dashboard */}
+          <Panel defaultSize={sidebarCollapsed ? 40 : 35} minSize={25}>
+            <div className="flex flex-col h-full bg-surface">
+              {/* Tab bar */}
+              <div className="shrink-0 flex border-b border-border">
+                <TabButton
+                  label="Widgets"
+                  active={rightTab === "widgets"}
+                  onClick={() => setRightTab("widgets")}
+                />
+                <TabButton
+                  label="Dashboard"
+                  active={rightTab === "dashboard"}
+                  onClick={() => setRightTab("dashboard")}
+                />
+              </div>
+
+              {/* Tab content */}
+              <div className="flex-1 overflow-hidden">
+                {rightTab === "widgets" ? (
+                  <WidgetsSidebar compiledMemory={memory.compiledMemory} />
+                ) : (
+                  <MemoryDashboard
+                    events={memory.events}
+                    nodes={memory.nodes}
+                    edges={memory.edges}
+                    compiledMemory={memory.compiledMemory}
+                    isConsolidating={memory.isConsolidating}
+                    contradictionsResolved={
+                      memory.lastConsolidation?.contradictionsResolved ?? 0
+                    }
+                    onConsolidate={handleConsolidate}
+                  />
+                )}
+              </div>
+            </div>
+          </Panel>
+        </Group>
+      </div>
     </div>
   );
 }

@@ -45,22 +45,26 @@ const LIGHT_TOOLTIP_STYLE = {
 
 export function BenchmarkCharts() {
   return (
-    <section className="bg-surface py-32 px-6">
+    <section className="bg-surface py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-semibold text-text-primary mb-4">
-            Benchmarks
-          </h2>
-          <p className="text-lg text-text-secondary">
-            Performance comparison across key dimensions.
+          <p className="font-mono text-[11px] text-accent uppercase tracking-widest mb-3">
+            // BENCHMARKS
           </p>
-          <p className="text-xs text-text-tertiary italic mt-2">
-            Simulated benchmark — real evaluation in progress
+          <h2 className="text-3xl font-semibold text-text-primary mb-3">
+            Performance comparison.
+          </h2>
+          <p className="text-base text-text-secondary mb-1">
+            Measured across ingestion latency, contradiction resolution, and
+            retrieval precision.
+          </p>
+          <p className="font-mono text-[10px] text-text-tertiary">
+            * Simulated benchmark data — real evaluation in progress
           </p>
         </motion.div>
 
@@ -91,11 +95,7 @@ export function BenchmarkCharts() {
                   axisLine={{ stroke: "#e5e5e5" }}
                 />
                 <Tooltip {...LIGHT_TOOLTIP_STYLE} />
-                <Bar
-                  dataKey="latency"
-                  radius={[3, 3, 0, 0]}
-                  fill="#0057FF"
-                />
+                <Bar dataKey="latency" radius={[3, 3, 0, 0]} fill="#0057FF" />
               </BarChart>
             </ResponsiveContainer>
           </motion.div>
@@ -128,11 +128,7 @@ export function BenchmarkCharts() {
                   axisLine={{ stroke: "#e5e5e5" }}
                 />
                 <Tooltip {...LIGHT_TOOLTIP_STYLE} />
-                <Bar
-                  dataKey="resolved"
-                  fill="#1a7f4b"
-                  radius={[3, 3, 0, 0]}
-                />
+                <Bar dataKey="resolved" fill="#1a7f4b" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </motion.div>

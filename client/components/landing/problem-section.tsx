@@ -2,59 +2,94 @@
 
 interface ProblemCard {
   readonly number: string;
+  readonly slug: string;
   readonly title: string;
   readonly description: string;
+  readonly annotation: string;
 }
 
 const PROBLEMS: readonly ProblemCard[] = [
   {
     number: "01",
+    slug: "STALE RECALL",
     title: "The Goldfish",
     description:
-      'Vector databases return stale facts alongside current ones. Ask "Where do I live?" and get three different cities with no way to know which is current.',
+      "Vector databases return stale facts alongside current ones with no temporal ordering. Every fact looks equally valid.",
+    annotation: `query: "where do I live?"
+→ Austin (score: 0.87, t=2024-01)
+→ NYC    (score: 0.86, t=2024-06)
+→ Austin (score: 0.85, t=2024-09)
+# no way to know which is current`,
   },
   {
     number: "02",
+    slug: "LATENCY SPIKE",
     title: "The Bottleneck",
     description:
-      "Synchronous graph extraction blocks the critical path. Every message waits 800ms+ for entity resolution before the agent can respond.",
+      "Synchronous graph extraction blocks the critical path. Every message waits for entity resolution before the agent responds.",
+    annotation: `entity_extraction:  847ms ← blocking
+llm_call:           1200ms
+total_wait:         2047ms / message
+p99_overhead:       +2.3s per turn`,
   },
   {
     number: "03",
+    slug: "SILENT FAILURE",
     title: "The Forgetter",
     description:
-      "Relying on agents to actively manage their own memory is like asking someone to take notes while sleeping. It never happens reliably.",
+      "Relying on agents to manage their own memory never works reliably. Without external enforcement, it simply doesn't happen.",
+    annotation: `memory.save() calls / session: 0
+agent_initiated_saves (30d):  0/183
+auto_recall_attempts:         0/183
+effective_memory_rate:        0.0%`,
   },
 ] as const;
 
 export function ProblemSection() {
   return (
-    <section className="bg-surface py-32 px-6">
+    <section className="bg-surface py-24 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-16">
-          <h2 className="text-balance text-4xl font-semibold text-text-primary mb-4 md:text-5xl">
+        {/* Section header */}
+        <div className="mb-12">
+          <p className="font-mono text-[11px] text-accent uppercase tracking-widest mb-3">
+            // PROBLEM
+          </p>
+          <h2 className="text-3xl font-semibold text-text-primary mb-3">
             Your AI has amnesia.
           </h2>
-          <p className="text-lg text-text-secondary max-w-xl">
-            Current memory systems share the same fundamental flaws.
+          <p className="text-base text-text-secondary max-w-xl">
+            Current memory systems share three fundamental failure modes.
           </p>
         </div>
 
-        <div className="grid gap-px md:grid-cols-3 border border-border rounded-lg overflow-hidden">
+        {/* Cards */}
+        <div className="grid gap-px md:grid-cols-3 bg-border rounded-lg overflow-hidden">
           {PROBLEMS.map((problem) => (
-            <div
-              key={problem.title}
-              className="bg-background p-8"
-            >
-              <span className="font-mono text-4xl font-medium text-border-strong leading-none block mb-6">
-                {problem.number}
-              </span>
-              <h3 className="text-lg font-semibold text-text-primary mb-3">
-                {problem.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-text-secondary">
-                {problem.description}
-              </p>
+            <div key={problem.title} className="bg-background flex flex-col">
+              {/* Card header */}
+              <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+                <span className="font-mono text-xs text-text-tertiary">
+                  {problem.number}
+                </span>
+                <span className="font-mono text-[10px] text-danger">
+                  {problem.slug}
+                </span>
+              </div>
+
+              {/* Card body */}
+              <div className="px-6 py-5 flex-1">
+                <h3 className="text-base font-semibold text-text-primary mb-2">
+                  {problem.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-text-secondary mb-5">
+                  {problem.description}
+                </p>
+
+                {/* Technical annotation */}
+                <pre className="font-mono text-[10px] leading-relaxed text-text-tertiary bg-surface rounded-[var(--radius)] border border-border p-3 overflow-x-auto whitespace-pre-wrap">
+                  <code>{problem.annotation}</code>
+                </pre>
+              </div>
             </div>
           ))}
         </div>

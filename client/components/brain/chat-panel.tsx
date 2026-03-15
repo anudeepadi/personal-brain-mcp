@@ -4,6 +4,12 @@ import { useState, useRef, useEffect, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare, Send, Upload } from "lucide-react";
 
+const EXAMPLE_PROMPTS = [
+  "I moved from NYC to Austin last month",
+  "I work at Acme Corp as a software engineer",
+  "I prefer Python over JavaScript for backend work",
+] as const;
+
 export interface ChatMessage {
   readonly id: string;
   readonly role: "user" | "assistant";
@@ -58,11 +64,28 @@ export function ChatPanel({ messages, onSendMessage }: ChatPanelProps) {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <MessageSquare className="size-10 text-border-strong mb-3" />
-            <p className="text-sm text-text-tertiary">
-              Start typing to dump thoughts into your brain...
-            </p>
+          <div className="flex flex-col items-center justify-center h-full text-center gap-5">
+            <div>
+              <MessageSquare className="size-9 text-border-strong mx-auto mb-3" />
+              <p className="text-sm font-medium text-text-secondary mb-1">
+                Start building your memory graph
+              </p>
+              <p className="text-xs text-text-tertiary max-w-xs">
+                Dump thoughts, facts, or questions. Mnemonic captures everything
+                instantly, consolidates async.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 w-full max-w-xs">
+              {EXAMPLE_PROMPTS.map((prompt) => (
+                <button
+                  key={prompt}
+                  onClick={() => onSendMessage(prompt)}
+                  className="text-left px-3 py-2 rounded-[var(--radius)] border border-border bg-surface hover:border-accent/30 hover:bg-accent-muted transition-colors text-xs text-text-secondary leading-snug"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

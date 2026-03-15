@@ -141,13 +141,16 @@ export function PipelineAnimation() {
   const lineScale = useTransform(scrollYProgress, [0.05, 0.9], [0, 1]);
 
   return (
-    <section ref={containerRef} className="bg-background py-32 px-6">
+    <section ref={containerRef} className="bg-background py-24 px-6">
       <div className="max-w-3xl mx-auto">
-        <div className="mb-20">
-          <h2 className="text-balance text-4xl font-semibold text-text-primary mb-4 md:text-5xl">
+        <div className="mb-16">
+          <p className="font-mono text-[11px] text-accent uppercase tracking-widest mb-3">
+            // PIPELINE
+          </p>
+          <h2 className="text-3xl font-semibold text-text-primary mb-3">
             The Full Pipeline
           </h2>
-          <p className="text-lg text-text-secondary max-w-xl">
+          <p className="text-base text-text-secondary max-w-xl">
             From chat bubble to updated ground truth — step by step.
           </p>
         </div>

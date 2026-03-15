@@ -68,11 +68,11 @@ const COLUMNS = [
 
 function CellIcon({ value }: { readonly value: CellValue }) {
   if (value === "yes")
-    return <Check className="size-4 text-success mx-auto" />;
+    return <Check className="size-3.5 text-success mx-auto" />;
   if (value === "no")
-    return <X className="size-4 text-danger mx-auto" />;
+    return <X className="size-3.5 text-danger mx-auto" />;
   if (value === "partial")
-    return <Minus className="size-4 text-text-tertiary mx-auto" />;
+    return <Minus className="size-3.5 text-text-tertiary mx-auto" />;
   return (
     <span className="tabular-nums font-mono text-xs text-text-primary">
       {value}
@@ -82,30 +82,35 @@ function CellIcon({ value }: { readonly value: CellValue }) {
 
 export function ComparisonSection() {
   return (
-    <section className="bg-surface py-32 px-6">
+    <section className="bg-surface py-24 px-6">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-16">
-          <h2 className="text-balance text-4xl font-semibold text-text-primary mb-4 md:text-5xl">
+        {/* Section header */}
+        <div className="mb-12">
+          <p className="font-mono text-[11px] text-accent uppercase tracking-widest mb-3">
+            // COMPARISON
+          </p>
+          <h2 className="text-3xl font-semibold text-text-primary mb-3">
             How we compare.
           </h2>
-          <p className="text-lg text-text-secondary max-w-xl">
+          <p className="text-base text-text-secondary max-w-xl">
             The only memory system with async consolidation and temporal
             contradiction resolution.
           </p>
         </div>
 
+        {/* Table */}
         <div className="rounded-lg border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border bg-surface">
-                  <th className="text-left px-6 py-3.5 text-xs font-medium text-text-tertiary uppercase tracking-wider whitespace-nowrap">
+                <tr className="border-b border-border bg-surface-raised">
+                  <th className="text-left px-5 py-3 text-[11px] font-medium text-text-tertiary uppercase tracking-wider whitespace-nowrap">
                     System
                   </th>
                   {COLUMNS.map((col) => (
                     <th
                       key={col}
-                      className="text-center px-4 py-3.5 text-xs font-medium text-text-tertiary uppercase tracking-wider whitespace-nowrap"
+                      className="text-center px-4 py-3 text-[11px] font-medium text-text-tertiary uppercase tracking-wider whitespace-nowrap"
                     >
                       {col}
                     </th>
@@ -122,35 +127,35 @@ export function ComparisonSection() {
                         : "bg-background"
                     }`}
                   >
-                    <td className="px-6 py-4 font-medium text-text-primary whitespace-nowrap">
+                    <td className="px-5 py-3.5 font-medium text-text-primary whitespace-nowrap">
                       {row.name}
                       {row.ours && (
-                        <span className="ml-2 text-[10px] uppercase tracking-wider font-mono bg-accent text-background px-1.5 py-0.5 rounded-sm">
+                        <span className="ml-2 text-[9px] uppercase tracking-widest font-mono bg-accent text-background px-1.5 py-0.5 rounded-sm">
                           ours
                         </span>
                       )}
                     </td>
-                    <td className="text-center px-4 py-4">
+                    <td className="text-center px-4 py-3.5">
                       <span className="tabular-nums font-mono text-xs text-text-primary">
                         {row.latency}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3.5">
                       <div className="flex justify-center">
                         <CellIcon value={row.contradiction} />
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3.5">
                       <div className="flex justify-center">
                         <CellIcon value={row.async} />
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3.5">
                       <div className="flex justify-center">
                         <CellIcon value={row.local} />
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3.5">
                       <div className="flex justify-center">
                         <CellIcon value={row.openSource} />
                       </div>
@@ -161,6 +166,11 @@ export function ComparisonSection() {
             </table>
           </div>
         </div>
+
+        {/* Footnote */}
+        <p className="mt-4 text-[11px] text-text-tertiary font-mono text-right">
+          * latency at p50 · contradiction resolution: 5-fact test set · async = non-blocking ingestion
+        </p>
       </div>
     </section>
   );

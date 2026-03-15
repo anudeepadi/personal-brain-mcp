@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -36,19 +36,19 @@ export function Navigation() {
         scrolled ? "border-b border-border" : "border-b border-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-text-primary"
-        >
+        <Link href="/" className="flex items-center gap-3 text-text-primary">
           <span className="font-display italic text-xl leading-none">
             Mnemonic
+          </span>
+          <span className="hidden sm:inline-flex font-mono text-[10px] text-text-tertiary border border-border rounded px-1.5 py-0.5 leading-none">
+            v1.0
           </span>
         </Link>
 
         {/* Desktop links */}
-        <nav className="hidden md:flex items-center gap-0">
+        <nav className="hidden md:flex items-center">
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href;
             return (
@@ -71,11 +71,20 @@ export function Navigation() {
           })}
         </nav>
 
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right actions */}
+        <div className="hidden md:flex items-center gap-2">
+          <a
+            href="https://github.com/anudeepadi/personal-brain-mcp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
+            aria-label="GitHub repository"
+          >
+            <Github className="size-4" />
+          </a>
           <Link
             href="/brain"
-            className="inline-flex items-center rounded-[var(--radius)] bg-text-primary px-4 py-2 text-sm font-medium text-background hover:opacity-90 transition-opacity"
+            className="inline-flex items-center rounded-[var(--radius)] bg-text-primary px-4 py-1.5 text-sm font-medium text-background hover:opacity-90 transition-opacity"
           >
             Get Started
           </Link>
@@ -120,13 +129,24 @@ export function Navigation() {
                   </Link>
                 );
               })}
-              <Link
-                href="/brain"
-                onClick={() => setMobileOpen(false)}
-                className="mt-2 rounded-[var(--radius)] bg-text-primary px-4 py-2.5 text-sm font-medium text-background text-center"
-              >
-                Get Started
-              </Link>
+              <div className="flex gap-2 mt-2">
+                <a
+                  href="https://github.com/anudeepadi/personal-brain-mcp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 rounded-[var(--radius)] border border-border px-4 py-2.5 text-sm font-medium text-text-secondary"
+                >
+                  <Github className="size-4" />
+                  GitHub
+                </a>
+                <Link
+                  href="/brain"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex-1 rounded-[var(--radius)] bg-text-primary px-4 py-2.5 text-sm font-medium text-background text-center"
+                >
+                  Get Started
+                </Link>
+              </div>
             </div>
           </motion.div>
         )}

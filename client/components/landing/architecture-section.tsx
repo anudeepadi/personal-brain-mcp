@@ -7,6 +7,7 @@ interface Stage {
   readonly icon: LucideIcon;
   readonly label: string;
   readonly sublabel: string;
+  readonly spec: string;
   readonly description: string;
 }
 
@@ -15,71 +16,100 @@ const STAGES: readonly Stage[] = [
     icon: Zap,
     label: "Event Stream",
     sublabel: "<10ms · Append-Only",
+    spec: "no LLM call",
     description:
-      "Every thought, message, and upload is instantly captured as an immutable event. No LLM calls, no blocking — just fast, reliable storage.",
+      "Every message, upload, and thought is instantly written as an immutable event. Zero blocking — the agent never waits.",
   },
   {
     icon: Moon,
     label: "Sleep Consolidator",
-    sublabel: "Background · Async",
+    sublabel: "Async · Background",
+    spec: "runs offline",
     description:
-      "Like human sleep, the consolidator runs offline — extracting entities, resolving contradictions, and building a coherent knowledge graph.",
+      "Like human sleep, consolidation runs offline — extracting entities, resolving contradictions, updating the temporal graph.",
   },
   {
     icon: Network,
     label: "Temporal Graph",
     sublabel: "Bitemporal · Episodic",
+    spec: "valid_until edges",
     description:
-      "A graph where every edge carries time bounds. Old facts aren't deleted — they're marked with valid_until, preserving full history.",
+      "Every graph edge carries time bounds. Old facts aren't deleted — they're marked with valid_until, preserving full history.",
   },
   {
     icon: FileText,
     label: "Compiled Memory",
-    sublabel: "System Prompt · Always Current",
+    sublabel: "System Prompt · Live",
+    spec: "0ms retrieval",
     description:
-      "The graph compiles down to a concise markdown summary injected into the agent's system prompt — always up-to-date, zero retrieval latency.",
+      "The graph compiles to a concise markdown summary injected into the system prompt — always current, no retrieval step.",
   },
 ] as const;
 
 export function ArchitectureSection() {
   return (
-    <section className="bg-background py-32 px-6">
+    <section className="bg-background py-24 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-16">
-          <h2 className="text-balance text-4xl font-semibold text-text-primary mb-4 md:text-5xl">
+        {/* Section header */}
+        <div className="mb-12">
+          <p className="font-mono text-[11px] text-accent uppercase tracking-widest mb-3">
+            // ARCHITECTURE
+          </p>
+          <h2 className="text-3xl font-semibold text-text-primary mb-3">
             How it works.
           </h2>
-          <p className="text-lg text-text-secondary max-w-xl">
+          <p className="text-base text-text-secondary max-w-xl">
             Dual-process architecture inspired by human memory consolidation.
+            Fast append at runtime, intelligent consolidation offline.
           </p>
         </div>
 
         {/* Horizontal pipeline */}
-        <div className="grid md:grid-cols-4 gap-0 border border-border rounded-lg overflow-hidden">
+        <div className="grid md:grid-cols-4 bg-border rounded-lg overflow-hidden gap-px">
           {STAGES.map((stage, i) => (
-            <div
-              key={stage.label}
-              className={`relative p-8 bg-background ${i < STAGES.length - 1 ? "md:border-r border-border" : ""} ${i > 0 ? "border-t md:border-t-0 border-border" : ""}`}
-            >
-              {/* Step number */}
-              <span className="font-mono text-xs text-text-tertiary mb-5 block">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-
-              {/* Icon */}
-              <div className="size-10 rounded-[var(--radius)] border border-border flex items-center justify-center mb-4">
-                <stage.icon className="size-5 text-accent" />
+            <div key={stage.label} className="bg-background flex flex-col">
+              {/* Stage header */}
+              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                <span className="font-mono text-xs text-text-tertiary">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="font-mono text-[10px] text-text-tertiary">
+                  {stage.spec}
+                </span>
               </div>
 
-              <h3 className="text-sm font-semibold text-text-primary mb-1">
-                {stage.label}
-              </h3>
-              <p className="font-mono text-[11px] text-accent mb-3">
-                {stage.sublabel}
-              </p>
-              <p className="text-xs leading-relaxed text-text-secondary">
-                {stage.description}
-              </p>
+              {/* Stage body */}
+              <div className="px-5 py-5 flex-1 flex flex-col">
+                {/* Icon */}
+                <div className="size-9 rounded-[var(--radius)] border border-border flex items-center justify-center mb-4">
+                  <stage.icon className="size-4 text-accent" />
+                </div>
+
+                <h3 className="text-sm font-semibold text-text-primary mb-1">
+                  {stage.label}
+                </h3>
+
+                {/* Sublabel chip */}
+                <span className="inline-flex font-mono text-[10px] text-accent bg-accent-muted rounded px-2 py-0.5 mb-3 self-start">
+                  {stage.sublabel}
+                </span>
+
+                <p className="text-xs leading-relaxed text-text-secondary flex-1">
+                  {stage.description}
+                </p>
+              </div>
+
+              {/* Progress bar */}
+              <div className="px-5 pb-4">
+                <div className="flex gap-1">
+                  {[0, 1, 2, 3].map((dot) => (
+                    <span
+                      key={dot}
+                      className={`h-px flex-1 ${dot <= i ? "bg-accent" : "bg-border"}`}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>

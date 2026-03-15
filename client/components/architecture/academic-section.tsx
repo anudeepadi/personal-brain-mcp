@@ -65,13 +65,16 @@ export function AcademicSection() {
   return (
     <>
       {/* Literature Cards */}
-      <section className="bg-background py-32 px-6">
+      <section className="bg-background py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-16">
-            <h2 className="text-balance text-4xl font-semibold text-text-primary mb-4 md:text-5xl">
-              Standing on Giants
+          <div className="mb-12">
+            <p className="font-mono text-[11px] text-accent uppercase tracking-widest mb-3">
+              // REFERENCES
+            </p>
+            <h2 className="text-3xl font-semibold text-text-primary mb-3">
+              Standing on giants.
             </h2>
-            <p className="text-lg text-text-secondary max-w-xl">
+            <p className="text-base text-text-secondary max-w-xl">
               Key papers that shaped our architecture.
             </p>
           </div>
@@ -107,7 +110,7 @@ export function AcademicSection() {
       </section>
 
       {/* Get Involved */}
-      <section className="bg-surface border-t border-border py-32 px-6">
+      <section className="bg-surface border-t border-border py-24 px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="font-display italic text-balance text-4xl text-text-primary mb-4">
             Get Involved
