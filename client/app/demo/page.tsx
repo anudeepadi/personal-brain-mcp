@@ -104,12 +104,15 @@ export default function DemoPage() {
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-semibold mb-4">
+          <p className="font-mono text-[11px] text-accent uppercase tracking-widest mb-3">
+            // DEMO
+          </p>
+          <h1 className="text-3xl font-semibold text-text-primary mb-3">
             The Moving Problem
           </h1>
-          <p className="text-lg text-text-secondary max-w-2xl">
-            Watch how different memory systems handle contradictory facts.
-            Five facts, three competitors, one clear winner.
+          <p className="text-base text-text-secondary max-w-2xl">
+            Watch how different memory systems handle contradictory facts. Five
+            facts, three competitors, one clear winner.
           </p>
         </div>
 
