@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { href: "/", label: "Product" },
   { href: "/brain", label: "Dashboard" },
   { href: "/demo", label: "Demo" },
-  { href: "/architecture", label: "Docs" },
+  { href: "/architecture", label: "Architecture" },
 ] as const;
 
 export function Navigation() {
