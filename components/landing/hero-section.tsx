@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { ArchitectureDiagram } from "./architecture-diagram";
+import { CountUp } from "@/components/ui/count-up";
+import { FadeIn } from "@/components/ui/fade-in";
 
 const METRICS = [
   { value: "<10ms", label: "ingestion latency" },
@@ -51,18 +53,21 @@ export function HeroSection() {
           </div>
 
           {/* Metrics strip */}
-          <div className="mt-10 pt-10 border-t border-border grid grid-cols-4 gap-6">
-            {METRICS.map((m) => (
-              <div key={m.value}>
-                <span className="font-mono text-base font-semibold text-text-primary block leading-none">
-                  {m.value}
-                </span>
-                <span className="text-[11px] text-text-tertiary mt-1 block leading-snug">
-                  {m.label}
-                </span>
-              </div>
-            ))}
-          </div>
+          <FadeIn delay={400}>
+            <div className="mt-10 pt-10 border-t border-border grid grid-cols-4 gap-6">
+              {METRICS.map((m) => (
+                <div key={m.value}>
+                  <CountUp
+                    target={m.value}
+                    className="font-mono text-base font-semibold text-text-primary block leading-none tabular-nums"
+                  />
+                  <span className="text-[11px] text-text-tertiary mt-1 block leading-snug">
+                    {m.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
         </div>
 
         {/* Right — architecture diagram */}
