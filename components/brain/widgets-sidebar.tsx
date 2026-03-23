@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Brain,
   Plug,
   FileText,
   ChevronDown,
-  Circle,
   Database,
   Cpu,
   MessageSquare,
@@ -51,19 +49,7 @@ function AccordionSection({
           }`}
         />
       </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-3">{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {open && <div className="px-4 pb-3">{children}</div>}
     </div>
   );
 }
@@ -92,8 +78,10 @@ function IntegrationBadge({ name, icon, status }: IntegrationBadgeProps) {
       <span className="text-text-tertiary">{icon}</span>
       <span className="text-xs text-text-secondary flex-1">{name}</span>
       <div className="flex items-center gap-1.5">
-        <Circle className={`h-1.5 w-1.5 fill-current ${dotColor}`} />
-        <span className="text-[10px] text-text-tertiary">{statusLabel}</span>
+        <span className={`size-1.5 rounded-full ${dotColor}`} />
+        <span className="text-[10px] font-mono text-text-tertiary">
+          {statusLabel}
+        </span>
       </div>
     </div>
   );

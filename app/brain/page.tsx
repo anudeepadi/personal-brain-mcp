@@ -84,7 +84,7 @@ export default function BrainPage() {
   const eventCount = memory.events.length;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-3.5rem)] overflow-hidden">
       {/* MCP status bar — warm surface with amber accents */}
       <div className="shrink-0 bg-surface border-b border-border flex items-center justify-between px-5 py-2">
         <div className="flex items-center gap-3">

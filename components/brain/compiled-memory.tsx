@@ -49,10 +49,20 @@ export function CompiledMemory({
             {compiledMemory}
           </pre>
         ) : (
-          <p className="text-xs text-text-tertiary italic">
-            No consolidated memory yet. Send some messages and click
-            &quot;Consolidate Now&quot;.
-          </p>
+          <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-6">
+            <div className="size-10 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center">
+              <FileText className="size-4 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs font-medium text-text-secondary mb-1">
+                No consolidated memory yet
+              </p>
+              <p className="text-[11px] text-text-tertiary text-pretty">
+                Send some messages, then click Consolidate Now to build your
+                knowledge graph.
+              </p>
+            </div>
+          </div>
         )}
       </div>
     </div>

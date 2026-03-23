@@ -68,11 +68,13 @@ export function ChatPanel({ messages, onSendMessage }: ChatPanelProps) {
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center gap-5">
             <div>
-              <MessageSquare className="size-9 text-border-strong mx-auto mb-3" />
-              <p className="text-sm font-medium text-text-secondary mb-1">
+              <div className="size-12 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto mb-3">
+                <MessageSquare className="size-5 text-accent" />
+              </div>
+              <p className="text-sm font-medium text-text-primary mb-1 text-balance">
                 Start building your memory graph
               </p>
-              <p className="text-xs text-text-tertiary max-w-xs">
+              <p className="text-xs text-text-tertiary max-w-xs text-pretty">
                 Dump thoughts, facts, or questions. Mnemonic captures everything
                 instantly, consolidates async.
               </p>
@@ -133,7 +135,7 @@ export function ChatPanel({ messages, onSendMessage }: ChatPanelProps) {
             onKeyDown={handleKeyDown}
             placeholder="Dump a thought, ask a question, or upload a file..."
             rows={1}
-            className="flex-1 resize-none rounded-[var(--radius)] border border-border bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent/40 transition-colors"
+            className="flex-1 resize-none rounded-[var(--radius)] border border-border bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent-muted transition-colors"
           />
 
           <button
