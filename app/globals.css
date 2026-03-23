@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────
+   Monochrome + Amber — editorial, warm stone neutrals.
+   Instrument Serif (display) + Geist (UI) + Geist Mono (data)
+   See client/design-system.ts for full documentation.
+   ────────────────────────────────────────────── */
+:root {
+  --background: #ffffff;
+  --surface: #fafaf9;
+  --surface-raised: #f5f5f4;
+  --bg-raised: #f5f5f4;
+  --bg-inset: #e7e5e4;
+  --text-primary: #0c0a09;
+  --text-secondary: #44403c;
+  --text-tertiary: #78716c;
+  --text-muted: #a8a29e;
+  --accent: #b45309;
+  --accent-hover: #92400e;
+  --accent-muted: rgba(180, 83, 9, 0.08);
+  --accent-subtle: rgba(180, 83, 9, 0.15);
+  --border: #e7e5e4;
+  --border-strong: #d6d3d1;
+  --danger: #b91c1c;
+  --success: #15803d;
+  --warning: #a16207;
+
+  /* shadcn compat tokens */
+  --foreground: var(--text-primary);
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-secondary);
+  --ring: var(--accent);
+  --radius: 4px;
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Selection ──────────────────────────────── */
+
+::selection {
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+
+/* ── Pulse dot ────────────────────────────────── */
+
+.pulse-dot {
+  animation: pulse-accent 2s ease-in-out infinite;
+}
+
+@keyframes pulse-accent {
+  0%, 100% { opacity: 0.4; box-shadow: 0 0 4px rgba(180, 83, 9, 0.2); }
+  50% { opacity: 1; box-shadow: 0 0 10px rgba(180, 83, 9, 0.5); }
+}
+
+/* ── Scrollbar ─────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* ── Focus ring ─────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Utility classes ────────────────────────── */
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mnemonic — Design System Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: 'Geist';
+    src: local('Geist'), local('GeistVF'), local('-apple-system'), local('BlinkMacSystemFont');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist Mono';
+    src: local('Geist Mono'), local('GeistMonoVF'), local('SF Mono'), local('Menlo');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  :root {
+    --bg: #ffffff;
+    --bg-surface: #fafaf9;
+    --bg-raised: #f5f5f4;
+    --bg-inset: #e7e5e4;
+    --text-primary: #0c0a09;
+    --text-secondary: #44403c;
+    --text-tertiary: #78716c;
+    --text-muted: #a8a29e;
+    --accent: #b45309;
+    --accent-hover: #92400e;
+    --accent-muted: rgba(180, 83, 9, 0.08);
+    --accent-subtle: rgba(180, 83, 9, 0.15);
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --success: #15803d;
+    --warning: #a16207;
+    --error: #b91c1c;
+    --info: #0c0a09;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'Geist Mono', 'SF Mono', 'Fira Code', 'Fira Mono', 'Menlo', monospace;
+  }
+
+  html.dark {
+    --bg: #0c0a09;
+    --bg-surface: #1c1917;
+    --bg-raised: #292524;
+    --bg-inset: #44403c;
+    --text-primary: #fafaf9;
+    --text-secondary: #d6d3d1;
+    --text-tertiary: #a8a29e;
+    --text-muted: #78716c;
+    --accent: #d97706;
+    --accent-hover: #f59e0b;
+    --accent-muted: rgba(217, 119, 6, 0.12);
+    --accent-subtle: rgba(217, 119, 6, 0.2);
+    --border: #292524;
+    --border-strong: #44403c;
+    --success: #22c55e;
+    --warning: #eab308;
+    --error: #ef4444;
+    --info: #fafaf9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  ::selection { background: var(--accent-muted); color: var(--accent); }
+
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+  /* Header */
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+    transition: background 0.3s ease;
+  }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; }
+  .header-logo { font-family: var(--font-display); font-size: 20px; font-style: italic; color: var(--accent); text-decoration: none; }
+  .header-nav { display: flex; align-items: center; gap: 24px; }
+  .header-nav a { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text-tertiary); text-decoration: none; transition: color 0.15s ease; }
+  .header-nav a:hover { color: var(--text-primary); }
+  .theme-toggle { display: flex; align-items: center; gap: 8px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); transition: all 0.15s ease; }
+  .theme-toggle:hover { border-color: var(--border-strong); }
+
+  /* Sections */
+  section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  .section-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .section-title { font-family: var(--font-display); font-size: 36px; line-height: 1.1; margin-bottom: 16px; color: var(--text-primary); }
+  .section-subtitle { font-size: 16px; color: var(--text-tertiary); max-width: 560px; margin-bottom: 48px; }
+
+  /* Hero */
+  .hero { padding: 96px 0 64px; border-bottom: 1px solid var(--border); }
+  .hero-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .hero-title { font-family: var(--font-display); font-size: 60px; line-height: 1.05; margin-bottom: 24px; max-width: 680px; }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-desc { font-size: 18px; line-height: 1.6; color: var(--text-secondary); max-width: 520px; margin-bottom: 32px; }
+  .hero-meta { display: flex; gap: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .hero-meta-value { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .hero-meta-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Specimens */
+  .specimen-grid { display: grid; gap: 48px; }
+  .specimen { display: grid; grid-template-columns: 180px 1fr; gap: 32px; align-items: start; }
+  .specimen-meta { padding-top: 4px; }
+  .specimen-name { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+  .specimen-role { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .specimen-display { padding: 32px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+
+  /* Palette */
+  .palette-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-bottom: 48px; }
+  .swatch { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+  .swatch-color { height: 72px; }
+  .swatch-info { padding: 10px 12px; background: var(--bg); }
+  .swatch-name { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+  .swatch-hex { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+  /* Semantic */
+  .semantic-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+  .semantic-item { padding: 16px; border-radius: var(--radius-md); border: 1px solid; }
+  .semantic-item.success { border-color: var(--success); background: rgba(21, 128, 61, 0.06); }
+  .semantic-item.warning { border-color: var(--warning); background: rgba(161, 98, 7, 0.06); }
+  .semantic-item.error { border-color: var(--error); background: rgba(185, 28, 28, 0.06); }
+  .semantic-item.info-s { border-color: var(--border-strong); background: var(--bg-surface); }
+  .semantic-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .semantic-label.success { color: var(--success); }
+  .semantic-label.warning { color: var(--warning); }
+  .semantic-label.error { color: var(--error); }
+  .semantic-label.info-s { color: var(--text-secondary); }
+  .semantic-text { font-size: 13px; color: var(--text-secondary); }
+
+  /* Components */
+  .components-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .component-card { padding: 32px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+  .component-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 20px; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .btn { font-family: var(--font-sans); font-size: 14px; font-weight: 500; padding: 8px 20px; border-radius: var(--radius-sm); border: 1px solid transparent; cursor: pointer; transition: all 0.15s ease; }
+  .btn-primary { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-accent:hover { background: var(--accent-hover); }
+  .btn-secondary { background: var(--bg); color: var(--text-primary); border-color: var(--border-strong); }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border-color: transparent; }
+  .btn-ghost:hover { color: var(--text-primary); background: var(--bg-raised); }
+  .input-group { margin-bottom: 16px; }
+  .input-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+  .input { width: 100%; font-family: var(--font-sans); font-size: 14px; padding: 8px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); outline: none; transition: border-color 0.15s ease; }
+  .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-muted); }
+  .input::placeholder { color: var(--text-muted); }
+  .card { padding: 24px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+  .card-title { font-family: var(--font-sans); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .card-desc { font-size: 14px; color: var(--text-tertiary); }
+
+  /* Dashboard */
+  .dashboard-mockup { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .dashboard-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-bottom: 1px solid var(--border); }
+  .dashboard-topbar-title { font-family: var(--font-display); font-size: 18px; font-style: italic; color: var(--accent); }
+  .dashboard-topbar-status { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+  .dashboard-body { display: grid; grid-template-columns: 1fr 320px; min-height: 420px; }
+  .dashboard-main { padding: 24px; border-right: 1px solid var(--border); }
+  .dashboard-sidebar { padding: 24px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { padding: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .stat-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; }
+  .stat-value { font-family: var(--font-sans); font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+  .stat-change { font-family: var(--font-mono); font-size: 11px; color: var(--accent); margin-top: 2px; }
+  .timeline-item { display: grid; grid-template-columns: 80px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: start; }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-time { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); padding-top: 2px; }
+  .timeline-content-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .timeline-content-desc { font-size: 13px; color: var(--text-tertiary); }
+  .timeline-badge { display: inline-block; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 6px; border-radius: 3px; margin-top: 4px; }
+  .badge-consolidated { background: var(--accent-muted); color: var(--accent); }
+  .badge-pending { background: var(--bg-raised); color: var(--text-muted); }
+  .sidebar-section { margin-bottom: 24px; }
+  .sidebar-section-title { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .entity-list { list-style: none; }
+  .entity-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px solid var(--border); }
+  .entity-item:last-child { border-bottom: none; }
+  .entity-count { font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+
+  /* Data table */
+  .data-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .data-table th { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); text-align: left; padding: 8px 16px 8px 0; border-bottom: 1px solid var(--border-strong); font-weight: 500; }
+  .data-table td { font-size: 14px; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+  .data-table td:first-child { color: var(--text-primary); font-weight: 500; }
+  .data-table tr:last-child td { border-bottom: none; }
+
+  /* Editorial link */
+  .editorial-link { font-size: 14px; color: var(--text-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color 0.15s ease; }
+  .editorial-link:hover { color: var(--accent); }
+
+  /* Code highlighting */
+  .editorial-code { font-family: var(--font-mono); font-size: 13px; line-height: 1.7; color: var(--text-secondary); white-space: pre-wrap; }
+  .editorial-code .kw { color: var(--text-primary); font-weight: 500; }
+  .editorial-code .str { color: var(--accent); }
+  .editorial-code .cmt { color: var(--text-muted); font-style: italic; }
+
+  .footer { padding: 32px 0; text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+  @media (max-width: 768px) {
+    .hero-title { font-size: 36px; }
+    .specimen { grid-template-columns: 1fr; gap: 12px; }
+    .palette-grid { grid-template-columns: repeat(3, 1fr); }
+    .semantic-grid { grid-template-columns: repeat(2, 1fr); }
+    .components-grid { grid-template-columns: 1fr; }
+    .dashboard-body { grid-template-columns: 1fr; }
+    .dashboard-sidebar { border-top: 1px solid var(--border); }
+    .hero-meta { flex-wrap: wrap; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="#" class="header-logo">Mnemonic</a>
+    <div class="header-nav">
+      <a href="#fonts">Typography</a>
+      <a href="#colors">Color</a>
+      <a href="#components">Components</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#editorial">Editorial</a>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">◐</span>
+        <span id="theme-label">Toggle theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Design System Preview</div>
+    <h1 class="hero-title">AI Agents Forget.<br>Mnemonic <em>Remembers.</em></h1>
+    <p class="hero-desc">Monochrome palette with amber accent. Instrument Serif display, Geist body, warm stone neutrals. The editorial identity of a scientific journal.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="hero-meta-value">Instrument Serif</span><span class="hero-meta-label">Display</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-value">Geist</span><span class="hero-meta-label">Body</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-value">Geist Mono</span><span class="hero-meta-label">Data / Code</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-value" style="color: var(--accent);">#b45309</span><span class="hero-meta-label">Accent</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Typography -->
+<section id="fonts">
+  <div class="container">
+    <div class="section-label">Fig. 1 — Typography</div>
+    <h2 class="section-title">Three fonts, three roles.</h2>
+    <p class="section-subtitle">Instrument Serif signals intellectual depth — no other AI infrastructure product uses a serif. Geist handles readability. Geist Mono anchors data.</p>
+    <div class="specimen-grid">
+      <div class="specimen">
+        <div class="specimen-meta"><div class="specimen-name">Instrument Serif</div><div class="specimen-role">Display / Hero</div></div>
+        <div class="specimen-display">
+          <div style="font-family: var(--font-display); font-size: 42px; line-height: 1.1; margin-bottom: 8px;">Memory that improves while you sleep.</div>
+          <div style="font-family: var(--font-display); font-size: 42px; line-height: 1.1; font-style: italic; color: var(--text-secondary);">Temporal knowledge graphs with bitemporal edges.</div>
+        </div>
+      </div>
+      <div class="specimen">
+        <div class="specimen-meta"><div class="specimen-name">Geist</div><div class="specimen-role">Body / UI</div></div>
+        <div class="specimen-display">
+          <div style="font-size: 16px; line-height: 1.6; color: var(--text-secondary);">Mnemonic uses a dual-process architecture inspired by human sleep consolidation. Fast, non-blocking writes at runtime. Intelligent graph consolidation offline. The result: an agent that actually remembers — without latency spikes, stale recalls, or silent failures.</div>
+        </div>
+      </div>
+      <div class="specimen">
+        <div class="specimen-meta"><div class="specimen-name">Geist Mono</div><div class="specimen-role">Data / Code</div></div>
+        <div class="specimen-display">
+          <div style="font-family: var(--font-mono); font-size: 14px; line-height: 1.6; color: var(--text-secondary);">episodic_stream.append(event)       # &lt;10ms, no LLM call
+consolidator.process(stream)         # async, offline
+knowledge_graph.query(entity="NYC")  # bitemporal lookup
+compiled_memory.inject(prompt)       # 0ms retrieval</div>
+        </div>
+      </div>
+      <div class="specimen">
+        <div class="specimen-meta"><div class="specimen-name">Geist (tabular-nums)</div><div class="specimen-role">Data Tables</div></div>
+        <div class="specimen-display">
+          <table class="data-table">
+            <thead><tr><th>Memory Type</th><th>Latency</th><th>Recall Rate</th><th>Freshness</th></tr></thead>
+            <tbody>
+              <tr><td>Episodic Stream</td><td>< 10ms</td><td>100%</td><td>Real-time</td></tr>
+              <tr><td>Knowledge Graph</td><td>45ms</td><td>94.2%</td><td>Consolidated</td></tr>
+              <tr><td>Compiled Memory</td><td>0ms</td><td>87.6%</td><td>Last cycle</td></tr>
+              <tr><td>Vector Search (baseline)</td><td>120ms</td><td>71.3%</td><td>At write</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Colors -->
+<section id="colors" style="background: var(--bg-surface);">
+  <div class="container">
+    <div class="section-label">Fig. 2 — Color Palette</div>
+    <h2 class="section-title">Monochrome + amber.</h2>
+    <p class="section-subtitle">Every competitor fights over blue vs green vs purple. Mnemonic sidesteps the game entirely. Amber is the only color — it means "memory activated."</p>
+    <div class="palette-grid">
+      <div class="swatch"><div class="swatch-color" style="background: #b45309;"></div><div class="swatch-info"><div class="swatch-name">Amber (accent)</div><div class="swatch-hex">#b45309</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #0c0a09;"></div><div class="swatch-info"><div class="swatch-name">Stone 950</div><div class="swatch-hex">#0c0a09</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #1c1917;"></div><div class="swatch-info"><div class="swatch-name">Stone 900</div><div class="swatch-hex">#1c1917</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #44403c;"></div><div class="swatch-info"><div class="swatch-name">Stone 700</div><div class="swatch-hex">#44403c</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #78716c;"></div><div class="swatch-info"><div class="swatch-name">Stone 500</div><div class="swatch-hex">#78716c</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #a8a29e;"></div><div class="swatch-info"><div class="swatch-name">Stone 400</div><div class="swatch-hex">#a8a29e</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #d6d3d1;"></div><div class="swatch-info"><div class="swatch-name">Stone 300</div><div class="swatch-hex">#d6d3d1</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #e7e5e4;"></div><div class="swatch-info"><div class="swatch-name">Stone 200</div><div class="swatch-hex">#e7e5e4</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #f5f5f4;"></div><div class="swatch-info"><div class="swatch-name">Stone 100</div><div class="swatch-hex">#f5f5f4</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #fafaf9; border-bottom: 1px solid #e7e5e4;"></div><div class="swatch-info"><div class="swatch-name">Stone 50</div><div class="swatch-hex">#fafaf9</div></div></div>
+    </div>
+    <div class="section-label" style="margin-bottom: 16px;">Semantic Colors</div>
+    <div class="semantic-grid">
+      <div class="semantic-item success"><div class="semantic-label success">Success</div><div class="semantic-text">Connected · Consolidated · Synced</div></div>
+      <div class="semantic-item warning"><div class="semantic-label warning">Warning</div><div class="semantic-text">Stale memory · Pending consolidation</div></div>
+      <div class="semantic-item error"><div class="semantic-label error">Error</div><div class="semantic-text">Failed recall · Broken connection</div></div>
+      <div class="semantic-item info-s"><div class="semantic-label info-s">Info</div><div class="semantic-text">System note · Background process</div></div>
+    </div>
+    <div class="section-label" style="margin-bottom: 16px;">Accent Usage — When Amber Appears</div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      <div class="card"><div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-bottom: 12px;"></div><div class="card-title">Memory active</div><div class="card-desc">Consolidation in progress, recall triggered, entity highlighted</div></div>
+      <div class="card"><div style="font-size: 14px; color: var(--accent); margin-bottom: 12px; font-weight: 500;">3 new</div><div class="card-title">Notifications</div><div class="card-desc">New memories consolidated, attention signals, badges</div></div>
+      <div class="card"><div style="font-size: 14px; margin-bottom: 12px;"><span style="text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px;">temporal edges</span></div><div class="card-title">Emphasis</div><div class="card-desc">Key terms, hover states, focus rings, selected items</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Components -->
+<section id="components">
+  <div class="container">
+    <div class="section-label">Fig. 3 — Components</div>
+    <h2 class="section-title">Buttons, inputs, and cards.</h2>
+    <p class="section-subtitle">Black primary buttons. Amber reserved for memory-active states. Links are underlined, editorial-style.</p>
+    <div class="components-grid">
+      <div class="component-card">
+        <div class="component-label">Buttons</div>
+        <div class="btn-row">
+          <button class="btn btn-primary">Get Started</button>
+          <button class="btn btn-accent">Consolidate</button>
+          <button class="btn btn-secondary">View Docs</button>
+          <button class="btn btn-ghost">Cancel</button>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);">Primary (black) · Accent (amber, memory actions) · Secondary · Ghost</div>
+      </div>
+      <div class="component-card">
+        <div class="component-label">Form Inputs</div>
+        <div class="input-group"><label class="input-label">Search memories</label><input type="text" class="input" placeholder="What do you remember about Austin?"></div>
+        <div class="input-group"><label class="input-label">Namespace</label><input type="text" class="input" value="personal-knowledge"></div>
+      </div>
+      <div class="component-card">
+        <div class="component-label">Card — Memory Entity</div>
+        <div class="card" style="margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+            <div class="card-title">Location: Austin, TX</div>
+            <span class="timeline-badge badge-consolidated">Consolidated</span>
+          </div>
+          <div class="card-desc" style="margin-bottom: 8px;">Moved from NYC in Feb 2026. Lives in East Austin. Prefers warm weather.</div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);">3 sources · valid_from: 2026-02-15 · confidence: 0.94</div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-label">Links & Text Styles</div>
+        <p style="font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 16px;">The <a href="#" class="editorial-link">episodic stream</a> appends events in real-time. During <a href="#" class="editorial-link">sleep consolidation</a>, the system extracts entities and builds <a href="#" class="editorial-link">temporal knowledge graphs</a>.</p>
+        <div style="display: flex; gap: 16px; font-size: 13px;">
+          <span style="color: var(--text-primary); font-weight: 600;">Bold weight</span>
+          <span style="color: var(--text-secondary);">Regular text</span>
+          <span style="color: var(--text-muted);">Muted text</span>
+          <span style="color: var(--accent); font-family: var(--font-mono); font-size: 12px;">AMBER LABEL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard" style="background: var(--bg-surface);">
+  <div class="container">
+    <div class="section-label">Fig. 4 — Dashboard</div>
+    <h2 class="section-title">The brain at a glance.</h2>
+    <p class="section-subtitle">Grid-disciplined layout for the data-heavy dashboard. Monospace labels, tabular numbers, hairline rules.</p>
+    <div class="dashboard-mockup">
+      <div class="dashboard-topbar">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <span class="dashboard-topbar-title">Mnemonic</span>
+          <span class="dashboard-topbar-status"><span class="status-dot"></span>MCP Connected · Pinecone · Gemini Flash</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);">v1.0</span>
+          <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--bg-raised); border: 1px solid var(--border);"></div>
+        </div>
+      </div>
+      <div class="dashboard-body">
+        <div class="dashboard-main">
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">Memories</div><div class="stat-value">1,247</div><div class="stat-change">+23 today</div></div>
+            <div class="stat-card"><div class="stat-label">Entities</div><div class="stat-value">89</div><div class="stat-change">+5 consolidated</div></div>
+            <div class="stat-card"><div class="stat-label">Recall Rate</div><div class="stat-value">94.2%</div><div class="stat-change">+2.1% vs baseline</div></div>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border);">Recent Activity</div>
+          <div>
+            <div class="timeline-item"><div class="timeline-time">14:32</div><div><div class="timeline-content-title">Preference updated</div><div class="timeline-content-desc">"Prefers Python over JavaScript for backend" — supersedes prior belief</div><span class="timeline-badge badge-consolidated">Consolidated</span></div></div>
+            <div class="timeline-item"><div class="timeline-time">14:28</div><div><div class="timeline-content-title">New entity: FastAPI</div><div class="timeline-content-desc">Extracted from conversation about backend architecture</div><span class="timeline-badge badge-consolidated">Consolidated</span></div></div>
+            <div class="timeline-item"><div class="timeline-time">14:15</div><div><div class="timeline-content-title">Brain dump archived</div><div class="timeline-content-desc">"I moved from NYC to Austin last month" — 3 entities extracted</div><span class="timeline-badge badge-pending">Pending</span></div></div>
+            <div class="timeline-item"><div class="timeline-time">13:47</div><div><div class="timeline-content-title">Contradiction resolved</div><div class="timeline-content-desc">Location: NYC → Austin (valid_until set on old edge)</div><span class="timeline-badge badge-consolidated">Consolidated</span></div></div>
+          </div>
+        </div>
+        <div class="dashboard-sidebar">
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">Knowledge Entities</div>
+            <ul class="entity-list">
+              <li class="entity-item"><span>Austin, TX</span><span class="entity-count">12</span></li>
+              <li class="entity-item"><span>Python</span><span class="entity-count">8</span></li>
+              <li class="entity-item"><span>FastAPI</span><span class="entity-count">5</span></li>
+              <li class="entity-item"><span>Pinecone</span><span class="entity-count">4</span></li>
+              <li class="entity-item"><span>LangChain</span><span class="entity-count">3</span></li>
+            </ul>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">Consolidation Status</div>
+            <div style="margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;"><span style="color: var(--text-secondary);">Processing queue</span><span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">2 pending</span></div><div style="height: 4px; background: var(--bg-raised); border-radius: 2px;"><div style="width: 78%; height: 100%; background: var(--accent); border-radius: 2px;"></div></div></div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);">Last cycle: 2 min ago · Next: ~8 min</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">Integrations</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;"><span>Pinecone</span><span style="display: flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--success);"><span style="width: 5px; height: 5px; border-radius: 50%; background: var(--success);"></span> Connected</span></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;"><span>Google Gemini</span><span style="display: flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--success);"><span style="width: 5px; height: 5px; border-radius: 50%; background: var(--success);"></span> Connected</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Editorial -->
+<section id="editorial">
+  <div class="container">
+    <div class="section-label">Fig. 5 — Editorial Layout</div>
+    <h2 class="section-title">Marketing that reads like research.</h2>
+    <p class="section-subtitle">Asymmetric grid, figure annotations, pull quotes. The landing page looks like a scientific publication, not a SaaS template.</p>
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 64px; align-items: start; padding: 48px 0;">
+      <div>
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Fig. 5a — The consolidation problem</div>
+        <h3 style="font-family: var(--font-display); font-size: 48px; line-height: 1.05; margin-bottom: 24px;">Current memory systems fail because they treat recall as a read operation.</h3>
+        <p style="font-size: 16px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 24px;">Vector databases return stale facts at equal similarity scores. There is no temporal ordering, no contradiction resolution, no way to distinguish "lived in NYC" from "lives in Austin." Every query returns everything it ever learned, weighted by embedding distance alone.</p>
+        <p style="font-size: 16px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 24px;">Mnemonic treats memory as a <em>biological process</em>. Raw events are appended instantly — under 10ms, no LLM call. A separate consolidation pipeline runs offline, extracting entities, resolving contradictions, and building <a href="#" class="editorial-link">bitemporal knowledge graphs</a> where old facts are preserved, not overwritten.</p>
+        <a href="#" class="editorial-link">Read the architecture paper →</a>
+      </div>
+      <div style="padding: 32px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md);">
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Consolidation pipeline</div>
+        <div class="editorial-code"><span class="cmt"># Phase 1: Episodic capture (&lt;10ms)</span>
+stream = EpisodicStream()
+stream.<span class="kw">append</span>(event, timestamp=now())
+
+<span class="cmt"># Phase 2: Sleep consolidation (async)</span>
+entities = consolidator.<span class="kw">extract</span>(stream)
+graph.<span class="kw">upsert</span>(
+  entity=<span class="str">"Location"</span>,
+  value=<span class="str">"Austin, TX"</span>,
+  valid_from=<span class="str">"2026-02-15"</span>,
+  supersedes=<span class="str">"NYC"</span>
+)
+
+<span class="cmt"># Phase 3: Compiled memory (0ms)</span>
+prompt = compiled.<span class="kw">inject</span>(system_prompt)</div>
+      </div>
+    </div>
+    <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 0; margin: 32px 0; text-align: center;">
+      <blockquote style="font-family: var(--font-display); font-size: 32px; font-style: italic; line-height: 1.3; max-width: 640px; margin: 0 auto 12px;">"The best memory is the one you never have to think about retrieving."</blockquote>
+      <div style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">— Design principle [1]</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="container">Mnemonic Design System Preview · Generated by /design-consultation · March 2026</div></footer>
+
+<script>
+  function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    document.getElementById('theme-icon').textContent = isDark ? '◑' : '◐';
+    document.getElementById('theme-label').textContent = isDark ? 'Light mode' : 'Dark mode';
+  }
+</script>
+</body>
+</html>
