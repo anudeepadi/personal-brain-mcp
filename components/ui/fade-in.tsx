@@ -15,12 +15,19 @@ interface FadeInProps {
   readonly direction?: "up" | "none";
 }
 
-export function FadeIn({ children, className, delay = 0, direction = "up" }: FadeInProps) {
+export function FadeIn({
+  children,
+  className,
+  delay = 0,
+  direction = "up",
+}: FadeInProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (prefersReduced) {
       setIsVisible(true);
       return;
@@ -36,7 +43,7 @@ export function FadeIn({ children, className, delay = 0, direction = "up" }: Fad
           observer.disconnect();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0, rootMargin: "0px 0px 200px 0px" },
     );
 
     observer.observe(el);
