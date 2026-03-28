@@ -20,3 +20,6 @@ pydub
 
 # For MCP server
 mcp
+
+# Error tracking (optional — only active when SENTRY_DSN is set)
+sentry-sdk[fastapi]

@@ -13,6 +13,19 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# ── Sentry (optional — only active when SENTRY_DSN is set) ──────────
+sentry_dsn = os.getenv("SENTRY_DSN")
+if sentry_dsn:
+    try:
+        import sentry_sdk
+        sentry_sdk.init(
+            dsn=sentry_dsn,
+            traces_sample_rate=0.1,
+            environment=os.getenv("ENVIRONMENT", "development"),
+        )
+    except ImportError:
+        logger.warning("SENTRY_DSN is set but sentry-sdk is not installed")
+
 # Import models from separate module to avoid circular imports
 from models import (
     ChatMessage, DocumentReference, SearchResult, EnhancedChatResponse,
