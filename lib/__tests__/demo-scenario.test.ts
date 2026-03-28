@@ -36,7 +36,7 @@ describe("createDemoScenario", () => {
       scenario.advance();
     }
     const results = scenario.getCompetitorResults();
-    const sub = results.find((r) => r.name === "Subconscious");
+    const sub = results.find((r) => r.name === "Mnemonic");
     expect(sub).toBeDefined();
     expect(sub!.contradictionsResolved).toBe(3);
     expect(sub!.temporalTrail).toBe(true);

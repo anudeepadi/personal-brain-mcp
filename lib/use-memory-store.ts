@@ -9,6 +9,8 @@ import {
   type ConsolidationResult,
   type MemoryEngine,
 } from "./use-memory-engine";
+import { storeMemory } from "./api";
+import { getSessionId } from "./session";
 
 export interface MemoryStore {
   readonly events: readonly MemoryEvent[];
@@ -50,6 +52,10 @@ export function useMemoryStore(): MemoryStore {
     (content: string, type: MemoryEvent["type"] = "chat"): MemoryEvent => {
       const event = engineRef.current.appendEvent(content, type);
       syncState();
+
+      // Fire-and-forget: store memory candidate in Pinecone (async, non-blocking)
+      storeMemory(content, getSessionId());
+
       return event;
     },
     [syncState],

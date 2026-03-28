@@ -87,3 +87,26 @@ class SavedChatInfo(BaseModel):
     tags: list[str]
     metadata: dict
     preview: str  # First few words of conversation
+
+
+class ChatEnhancedRequest(BaseModel):
+    """JSON request body for the enhanced chat endpoint."""
+    query: str
+    model_provider: Literal["gemini", "claude"] = "gemini"
+    include_references: bool = True
+    chat_history: list[dict] = Field(default_factory=list)  # [{role: "user"/"assistant", content: str}]
+
+
+class MemoryCreateRequest(BaseModel):
+    """Request for storing a text-based memory candidate."""
+    content: str = Field(..., min_length=10, max_length=5000)
+    source: Literal["chat", "import", "mcp"] = "chat"
+    session_id: str
+    tags: list[str] = Field(default_factory=list)
+
+
+class MemoryCreateResponse(BaseModel):
+    """Response after storing a memory."""
+    memory_id: str
+    chunks_stored: int
+    status: str = "stored"

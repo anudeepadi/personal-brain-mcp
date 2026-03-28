@@ -58,15 +58,15 @@ User message
 
 ## What's Built
 
-### Frontend — `client/`
-Next.js 16 · TailwindCSS 4 · Framer Motion · Recharts · `react-resizable-panels`
+### Frontend (root)
+Next.js 16 · Tailwind 4 · Framer Motion · Recharts · `react-resizable-panels`
 
 - **Landing page** — problem framing, architecture walkthrough, competitive comparison
 - **Dashboard** — resizable 2-panel layout: chat interface + memory widgets / live graph
 - **Demo** — interactive "Moving Problem" simulation (3 competitors, 5 contradiction facts)
 - **Architecture** — Three-tier memory model, five-layer stack, MCP protocol reference, roadmap
 
-### Backend — `server/`
+### Backend — `backend/`
 FastAPI · Python 3.12 · Pinecone · LangChain · Google Gemini · Anthropic Claude · FastMCP
 
 - **15 REST endpoints** — upsert, chat, search, archive, document management
@@ -104,7 +104,6 @@ Inspired by Karpathy's autoresearch — runs a modify → evaluate → keep/disc
 
 ### Frontend
 ```bash
-cd client
 npm install
 npm run dev
 # → http://localhost:3000
@@ -112,10 +111,10 @@ npm run dev
 
 ### Backend
 ```bash
-cd server
+cd backend
 pip install -r requirements.txt
 
-# Create server/.env:
+# Create backend/.env:
 GOOGLE_API_KEY=...
 PINECONE_API_KEY=...
 PINECONE_INDEX_NAME=...

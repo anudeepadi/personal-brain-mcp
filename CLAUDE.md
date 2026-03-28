@@ -60,7 +60,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 - **Business Logic** (`personal_brain_mcp/services.py`): File parsing (PDF, OCR, audio), vector ops, LLM integration, RAG chain
 
 ### Frontend (root)
-- Next.js 14 App Router with TailwindCSS
+- Next.js 16 App Router with Tailwind 4
 - Pages: Landing (design showcase), Brain (memory dashboard), Architecture, Demo
 - Components organized by feature area
 

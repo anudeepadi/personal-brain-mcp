@@ -6,12 +6,10 @@ import { ChatPanel, type ChatMessage } from "@/components/brain/chat-panel";
 import { MemoryDashboard } from "@/components/brain/memory-dashboard";
 import { WidgetsSidebar } from "@/components/brain/widgets-sidebar";
 import { useMemoryStore } from "@/lib/use-memory-store";
+import { fetchChat, storeMemory } from "@/lib/api";
+import { getSessionId } from "@/lib/session";
 
-let msgIdCounter = 0;
-function nextMsgId(): string {
-  msgIdCounter += 1;
-  return `msg_${msgIdCounter}`;
-}
+// ── Fallback simulation (used when backend is unreachable) ───────────
 
 function simulateResponse(userMessage: string): string {
   const lower = userMessage.toLowerCase();
@@ -46,17 +44,31 @@ function simulateResponse(userMessage: string): string {
   return "Thought captured in the event stream. Keep dumping — when ready, hit Consolidate to build your knowledge graph.";
 }
 
+// ── Chat history helper ──────────────────────────────────────────────
+
+const MAX_HISTORY = 10;
+
+function buildChatHistory(
+  msgs: readonly ChatMessage[],
+): ReadonlyArray<{ readonly role: string; readonly content: string }> {
+  return msgs.slice(-MAX_HISTORY).map((m) => ({
+    role: m.role,
+    content: m.content,
+  }));
+}
+
 type RightTab = "widgets" | "dashboard";
 
 export default function BrainPage() {
   const memory = useMemoryStore();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [rightTab, setRightTab] = useState<RightTab>("widgets");
+  const [isOffline, setIsOffline] = useState(false);
 
   const handleSendMessage = useCallback(
     (content: string) => {
       const userMsg: ChatMessage = {
-        id: nextMsgId(),
+        id: crypto.randomUUID(),
         role: "user",
         content,
         timestamp: new Date().toISOString(),
@@ -64,17 +76,45 @@ export default function BrainPage() {
       setMessages((prev) => [...prev, userMsg]);
       memory.appendEvent(content, "chat");
 
-      setTimeout(() => {
-        const assistantMsg: ChatMessage = {
-          id: nextMsgId(),
-          role: "assistant",
-          content: simulateResponse(content),
-          timestamp: new Date().toISOString(),
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
-      }, 500);
+      const history = buildChatHistory(messages);
+
+      // Try real backend first, fall back to simulation
+      fetchChat(content, history).then((result) => {
+        if (result.ok) {
+          setIsOffline(false);
+          const assistantMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: result.data.response,
+            timestamp: new Date().toISOString(),
+          };
+          setMessages((prev) => [...prev, assistantMsg]);
+
+          // Fire-and-forget: store memory in Pinecone
+          storeMemory(content, getSessionId());
+        } else if (result.error.code === "NETWORK_ERROR") {
+          // Backend unreachable — fall back to simulation
+          setIsOffline(true);
+          const assistantMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: simulateResponse(content),
+            timestamp: new Date().toISOString(),
+          };
+          setMessages((prev) => [...prev, assistantMsg]);
+        } else {
+          // Other API error — still show a simulated response
+          const assistantMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: simulateResponse(content),
+            timestamp: new Date().toISOString(),
+          };
+          setMessages((prev) => [...prev, assistantMsg]);
+        }
+      });
     },
-    [memory],
+    [memory, messages],
   );
 
   const handleConsolidate = useCallback(() => {
@@ -85,6 +125,16 @@ export default function BrainPage() {
 
   return (
     <div className="flex flex-col h-[calc(100dvh-3.5rem)] overflow-hidden">
+      {/* Offline mode banner */}
+      {isOffline && (
+        <div className="shrink-0 bg-accent/10 border-b border-accent/20 px-5 py-1.5 flex items-center gap-2">
+          <span className="size-1.5 rounded-full bg-accent" />
+          <span className="font-mono text-[11px] text-accent font-medium">
+            Offline mode — memory service unreachable. Chat works locally.
+          </span>
+        </div>
+      )}
+
       {/* MCP status bar — warm surface with amber accents */}
       <div className="shrink-0 bg-surface border-b border-border flex items-center justify-between px-5 py-2">
         <div className="flex items-center gap-3">

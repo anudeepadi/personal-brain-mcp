@@ -1,5 +1,7 @@
 import io
+import logging
 import mimetypes
+import os
 from typing import Literal
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Query
@@ -7,11 +9,14 @@ from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 # Import models from separate module to avoid circular imports
 from models import (
     ChatMessage, DocumentReference, SearchResult, EnhancedChatResponse,
     ArchiveRequest, DocumentMetadata, ChatExportRequest, SaveChatRequest,
-    RetrieveChatRequest, SavedChatInfo
+    RetrieveChatRequest, SavedChatInfo, ChatEnhancedRequest,
+    MemoryCreateRequest, MemoryCreateResponse
 )
 
 
@@ -24,6 +29,7 @@ from services import (
     process_and_store_enhanced, search_archived_chats_enhanced,
     search_documents_enhanced, get_all_documents,
     get_document_with_chunks, generate_enhanced_response,
+    store_memory,
     # Chat management functions
     parse_chat_export, save_chat_conversation,
     retrieve_chat_conversations, get_saved_chats_list,
@@ -37,9 +43,11 @@ app = FastAPI(
     version="2.0.0"
 )
 
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -175,11 +183,6 @@ async def upsert_file(file: UploadFile = File(...)):
     if not text_content or not text_content.strip():
         raise HTTPException(status_code=400, detail=f"Could not extract any text from the file: {file.filename}")
 
-    try:
-        await process_and_store(text_content, file.filename)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error storing document in vector store: {e}")
-
     document_metadata = await process_and_store_enhanced(text_content, file.filename, content_type, len(file_content))
     return document_metadata
 
@@ -204,21 +207,45 @@ async def chat_with_docs(
         raise HTTPException(status_code=500, detail=f"An error occurred during chat: {e}")
 
 @app.post("/chat/enhanced", summary="Enhanced chat with citations", response_model=EnhancedChatResponse)
-async def chat_with_citations(
-    query: str = Form(...),
-    model_provider: Literal["gemini", "claude"] = Form("gemini"),
-    include_references: bool = Form(True, description="Include citations and references in response.")
-):
+async def chat_with_citations(request: ChatEnhancedRequest):
     """
     Chat with enhanced citation support, returning structured response with references.
+    Accepts JSON body with query, model_provider, include_references, and optional chat_history.
     """
     try:
-        response = await generate_enhanced_response(query, model_provider, include_references)
+        response = await generate_enhanced_response(
+            query=request.query,
+            model_provider=request.model_provider,
+            include_references=request.include_references,
+            chat_history=request.chat_history,
+        )
         return response
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred during enhanced chat: {e}")
+
+# --- MEMORY ENDPOINTS ---
+# TODO: Phase 1B — add rate limiting via slowapi to prevent abuse of memory storage
+
+@app.post("/memories", summary="Store a memory candidate", response_model=MemoryCreateResponse)
+async def create_memory(request: MemoryCreateRequest):
+    """
+    Store a text-based memory candidate from a chat conversation.
+    Content is chunked, embedded via Gemini, and upserted to Pinecone
+    with type='memory' metadata.
+    """
+    try:
+        result = await store_memory(
+            content=request.content,
+            source=request.source,
+            session_id=request.session_id,
+            tags=request.tags,
+        )
+        return MemoryCreateResponse(**result)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to store memory: {e}")
+
 
 # --- CHAT MANAGEMENT ENDPOINTS ---
 

@@ -24,9 +24,9 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 # Local imports
-from .config import settings
+from config import settings
 # Import Pydantic models from models.py to avoid circular dependency
-from .models import ArchiveRequest, DocumentReference, SearchResult, EnhancedChatResponse, DocumentMetadata, ChatMessage, SavedChatInfo
+from models import ArchiveRequest, DocumentReference, SearchResult, EnhancedChatResponse, DocumentMetadata, ChatMessage, SavedChatInfo
 
 # --- INITIALIZATION ---
 # Global variables for lazy initialization
@@ -153,6 +153,46 @@ async def process_and_store_enhanced(content: str, filename: str, content_type: 
         document_id=document_id,
         summary=summary
     )
+
+async def store_memory(
+    content: str,
+    source: str,
+    session_id: str,
+    tags: list[str] | None = None,
+) -> dict:
+    """Chunk content, generate embeddings, and upsert to Pinecone as type='memory'.
+
+    Returns dict with memory_id, chunks_stored, and status.
+    """
+    _initialize_services()
+    memory_id = str(uuid4())
+    final_tags = tags or []
+
+    metadata = {
+        "type": "memory",
+        "memory_id": memory_id,
+        "source": source,
+        "session_id": session_id,
+        "tags": ",".join(final_tags),
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+
+    doc = Document(page_content=content, metadata=metadata)
+    chunked_docs = text_splitter.split_documents([doc])
+
+    # Annotate each chunk with its index and the shared memory_id
+    for i, chunk in enumerate(chunked_docs):
+        chunk.metadata["chunk_index"] = i
+        chunk.metadata["memory_id"] = memory_id
+
+    await vectorstore.aadd_documents(chunked_docs)
+
+    return {
+        "memory_id": memory_id,
+        "chunks_stored": len(chunked_docs),
+        "status": "stored",
+    }
+
 
 async def archive_chat_session(request: ArchiveRequest):
     """Formats a chat session, chunks it, and stores it in Pinecone with rich metadata."""
@@ -364,8 +404,21 @@ async def get_document_with_chunks(document_id: str) -> dict | None:
         ]
     }
 
-async def generate_enhanced_response(query: str, model_provider: Literal["gemini", "claude"] = "gemini", include_references: bool = True) -> EnhancedChatResponse:
-    """Generate response with citations and references."""
+async def generate_enhanced_response(
+    query: str,
+    model_provider: Literal["gemini", "claude"] = "gemini",
+    include_references: bool = True,
+    chat_history: list[dict] | None = None,
+) -> EnhancedChatResponse:
+    """Generate response with citations and references.
+
+    Args:
+        query: The user's question.
+        model_provider: LLM backend to use.
+        include_references: Whether to attach document references.
+        chat_history: Optional list of prior messages [{role, content}].
+    """
+    _initialize_services()
     if model_provider == "claude":
         if not llm_claude:
             raise ValueError("Anthropic API key not configured.")
@@ -373,8 +426,8 @@ async def generate_enhanced_response(query: str, model_provider: Literal["gemini
     else:
         llm = llm_gemini
 
-    # Get relevant documents
-    retriever = vectorstore.as_retriever(search_kwargs={'k': 5, 'filter': {"type": "document"}})
+    # Get relevant documents and memories
+    retriever = vectorstore.as_retriever(search_kwargs={'k': 5, 'filter': {"type": {"$in": ["document", "memory"]}}})
     docs = await retriever.aget_relevant_documents(query)
     
     # Create references
@@ -391,28 +444,45 @@ async def generate_enhanced_response(query: str, model_provider: Literal["gemini
             )
             references.append(ref)
     
+    # Build chat history section for the prompt
+    history_section = ""
+    if chat_history:
+        history_lines = []
+        for msg in chat_history:
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            history_lines.append(f"{role}: {content}")
+        history_section = "\n".join(history_lines)
+
     # Generate response with citations
     template = """
-    You are a helpful AI assistant. Answer the question based on the following context retrieved from uploaded documents.
+    You are a helpful AI assistant. Answer the question based on the following context retrieved from uploaded documents and memories.
     Include citations in your response using [1], [2], etc. format referring to the source documents.
-    
+    {history_block}
     Context:
     {context}
-    
+
     Question: {question}
-    
+
     Answer with citations:
     """
-    
-    prompt = ChatPromptTemplate.from_template(template)
-    
+
+    # Insert conversation history into template if present
+    history_block = ""
+    if history_section:
+        history_block = f"\n    Recent conversation:\n    {history_section}\n"
+
+    prompt = ChatPromptTemplate.from_template(
+        template.replace("{history_block}", history_block)
+    )
+
     def format_docs_with_citations(docs):
         formatted = []
         for i, doc in enumerate(docs, 1):
             source = doc.metadata.get("source", "unknown")
             formatted.append(f"[{i}] {doc.page_content} (Source: {source})")
         return "\n\n".join(formatted)
-    
+
     rag_chain = (
         RunnableParallel(
             context=retriever | format_docs_with_citations,
@@ -422,7 +492,7 @@ async def generate_enhanced_response(query: str, model_provider: Literal["gemini
         | llm
         | StrOutputParser()
     )
-    
+
     response_text = await rag_chain.ainvoke(query)
     
     return EnhancedChatResponse(
