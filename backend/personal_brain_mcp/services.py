@@ -2,9 +2,12 @@ import io
 import datetime
 import hashlib
 import json
+import logging
 import re
 from typing import Literal, AsyncGenerator
 from uuid import uuid4
+
+logger = logging.getLogger(__name__)
 
 # File Parsing
 from pydub import AudioSegment
@@ -185,7 +188,14 @@ async def store_memory(
         chunk.metadata["chunk_index"] = i
         chunk.metadata["memory_id"] = memory_id
 
-    await vectorstore.aadd_documents(chunked_docs)
+    try:
+        await vectorstore.aadd_documents(chunked_docs)
+    except Exception:
+        logger.error(
+            "Pinecone upsert failed: memory_id=%s, session_id=%s, chunks=%d",
+            memory_id, session_id, len(chunked_docs),
+        )
+        raise
 
     return {
         "memory_id": memory_id,
@@ -348,8 +358,14 @@ async def generate_response_stream(
         | StrOutputParser()
     )
 
+    yielded = False
     async for chunk in rag_chain.astream(query):
+        yielded = True
         yield chunk
+
+    if not yielded:
+        logger.error("Stream yielded nothing for query=%s", query[:100])
+        raise ValueError("AI returned empty response")
 
 async def get_all_documents(skip: int = 0, limit: int = 10) -> list[dict]:
     """Retrieve all documents with metadata."""
@@ -494,7 +510,11 @@ async def generate_enhanced_response(
     )
 
     response_text = await rag_chain.ainvoke(query)
-    
+
+    if not response_text or not response_text.strip():
+        logger.error("AI returned empty response for query=%s", query[:100])
+        raise ValueError("AI returned empty response")
+
     return EnhancedChatResponse(
         response=response_text,
         references=references,
