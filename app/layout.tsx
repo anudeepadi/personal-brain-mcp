@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { Navigation } from "@/components/navigation";
+import { SentryInit } from "@/components/sentry-init";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
@@ -32,9 +33,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(geistMono.variable, instrumentSerif.variable, "font-sans", geist.variable)}
+      className={cn(
+        geistMono.variable,
+        instrumentSerif.variable,
+        "font-sans",
+        geist.variable,
+      )}
     >
       <body className="font-sans antialiased">
+        <SentryInit />
         <Navigation />
         <main className="pt-14">{children}</main>
       </body>
