@@ -10,7 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 # Import models from separate module to avoid circular imports
 from models import (
     ChatMessage, DocumentReference, SearchResult, EnhancedChatResponse,
@@ -57,6 +59,105 @@ app.add_middleware(
 frontend_path = Path(__file__).parent / "frontend"
 if frontend_path.exists():
     app.mount("/frontend", StaticFiles(directory=str(frontend_path)), name="frontend")
+
+
+# ── Error handling helpers ───────────────────────────────────────────
+
+def _handle_ai_exception(exc: Exception, operation: str, query: str) -> None:
+    """Map AI-service exceptions to appropriate HTTP responses.
+
+    Catches Google API rate-limit (429), other Google API errors (503),
+    empty LLM response (502), and falls back to 500 for unknowns.
+    Always raises an HTTPException — never returns normally.
+    """
+    # google.api_core.exceptions may not be installed in test envs
+    try:
+        from google.api_core.exceptions import ResourceExhausted, GoogleAPIError
+    except ImportError:
+        ResourceExhausted = None  # type: ignore[assignment,misc]
+        GoogleAPIError = None  # type: ignore[assignment,misc]
+
+    if ResourceExhausted is not None and isinstance(exc, ResourceExhausted):
+        logger.warning(
+            "AI rate limited during %s: query=%s",
+            operation, query[:100],
+        )
+        raise HTTPException(
+            status_code=429,
+            detail="AI rate limit exceeded. Please retry in a moment.",
+            headers={"Retry-After": "30"},
+        )
+
+    if GoogleAPIError is not None and isinstance(exc, GoogleAPIError):
+        logger.error(
+            "Google API error during %s: query=%s, error=%s",
+            operation, query[:100], exc,
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="AI service temporarily unavailable",
+        )
+
+    # Empty / None response sentinel raised from services layer
+    if isinstance(exc, ValueError) and "empty" in str(exc).lower():
+        logger.error(
+            "Empty LLM response during %s: query=%s",
+            operation, query[:100],
+        )
+        raise HTTPException(
+            status_code=502,
+            detail="AI returned empty response",
+        )
+
+    logger.error(
+        "Unhandled error during %s: query=%s, error=%s",
+        operation, query[:100], exc,
+    )
+    raise HTTPException(
+        status_code=500,
+        detail=f"An error occurred during {operation}",
+    )
+
+
+def _handle_memory_exception(exc: Exception, content: str, session_id: str) -> None:
+    """Map memory-storage exceptions to appropriate HTTP responses.
+
+    Catches Pinecone errors (503), embedding failures (503),
+    and falls back to 500 for unknowns.
+    Always raises an HTTPException — never returns normally.
+    """
+    exc_type = type(exc).__module__ + "." + type(exc).__qualname__
+    is_pinecone = "pinecone" in exc_type.lower()
+    is_embedding = "embedding" in str(exc).lower() or "embed" in str(exc).lower()
+
+    if is_pinecone:
+        logger.error(
+            "Pinecone error storing memory: session_id=%s, content=%s, error=%s",
+            session_id, content[:100], exc,
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Memory storage temporarily unavailable",
+        )
+
+    if is_embedding:
+        logger.error(
+            "Embedding error storing memory: session_id=%s, content=%s, error=%s",
+            session_id, content[:100], exc,
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Embedding service unavailable",
+        )
+
+    logger.error(
+        "Unhandled error storing memory: session_id=%s, content=%s, error=%s",
+        session_id, content[:100], exc,
+    )
+    raise HTTPException(
+        status_code=500,
+        detail="Failed to store memory",
+    )
 
 
 @app.get("/", summary="Serve frontend UI")
@@ -202,9 +303,20 @@ async def chat_with_docs(
             media_type="text/event-stream"
         )
     except ValueError as e:
-         raise HTTPException(status_code=400, detail=str(e))
+        error_msg = str(e)
+        if "empty" in error_msg.lower():
+            logger.error(
+                "Empty LLM response: query=%s, provider=%s",
+                query[:100], model_provider,
+            )
+            raise HTTPException(status_code=502, detail="AI returned empty response")
+        logger.error(
+            "Chat ValueError: query=%s, provider=%s, error=%s",
+            query[:100], model_provider, e,
+        )
+        raise HTTPException(status_code=503, detail=error_msg)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred during chat: {e}")
+        _handle_ai_exception(e, "chat", query)
 
 @app.post("/chat/enhanced", summary="Enhanced chat with citations", response_model=EnhancedChatResponse)
 async def chat_with_citations(request: ChatEnhancedRequest):
@@ -221,12 +333,22 @@ async def chat_with_citations(request: ChatEnhancedRequest):
         )
         return response
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        error_msg = str(e)
+        if "empty" in error_msg.lower():
+            logger.error(
+                "Empty LLM response: query=%s, provider=%s",
+                request.query[:100], request.model_provider,
+            )
+            raise HTTPException(status_code=502, detail="AI returned empty response")
+        logger.error(
+            "Enhanced chat ValueError: query=%s, provider=%s, error=%s",
+            request.query[:100], request.model_provider, e,
+        )
+        raise HTTPException(status_code=503, detail=error_msg)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred during enhanced chat: {e}")
+        _handle_ai_exception(e, "enhanced_chat", request.query)
 
 # --- MEMORY ENDPOINTS ---
-# TODO: Phase 1B — add rate limiting via slowapi to prevent abuse of memory storage
 
 @app.post("/memories", summary="Store a memory candidate", response_model=MemoryCreateResponse)
 async def create_memory(request: MemoryCreateRequest):
@@ -235,6 +357,7 @@ async def create_memory(request: MemoryCreateRequest):
     Content is chunked, embedded via Gemini, and upserted to Pinecone
     with type='memory' metadata.
     """
+    # TODO: Add slowapi rate limiting (60 req/min per session) before production launch
     try:
         result = await store_memory(
             content=request.content,
@@ -244,7 +367,7 @@ async def create_memory(request: MemoryCreateRequest):
         )
         return MemoryCreateResponse(**result)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to store memory: {e}")
+        _handle_memory_exception(e, request.content, request.session_id)
 
 
 # --- CHAT MANAGEMENT ENDPOINTS ---
