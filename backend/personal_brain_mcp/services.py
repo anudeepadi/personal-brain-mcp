@@ -18,7 +18,7 @@ import PyPDF2
 
 # LangChain components
 from langchain_core.documents import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_pinecone import PineconeVectorStore
 from langchain_anthropic import ChatAnthropic
@@ -27,9 +27,9 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 # Local imports
-from config import settings
+from .config import settings
 # Import Pydantic models from models.py to avoid circular dependency
-from models import ArchiveRequest, DocumentReference, SearchResult, EnhancedChatResponse, DocumentMetadata, ChatMessage, SavedChatInfo
+from .models import ArchiveRequest, DocumentReference, SearchResult, EnhancedChatResponse, DocumentMetadata, ChatMessage, SavedChatInfo
 
 # --- INITIALIZATION ---
 # Global variables for lazy initialization
@@ -190,10 +190,10 @@ async def store_memory(
 
     try:
         await vectorstore.aadd_documents(chunked_docs)
-    except Exception:
+    except Exception as e:
         logger.error(
-            "Pinecone upsert failed: memory_id=%s, session_id=%s, chunks=%d",
-            memory_id, session_id, len(chunked_docs),
+            "Pinecone upsert failed for memory_id=%s, session_id=%s, content=%s: %s",
+            memory_id, session_id, content[:100], e,
         )
         raise
 
@@ -358,13 +358,17 @@ async def generate_response_stream(
         | StrOutputParser()
     )
 
-    yielded = False
+    has_content = False
     async for chunk in rag_chain.astream(query):
-        yielded = True
+        if chunk:
+            has_content = True
         yield chunk
 
-    if not yielded:
-        logger.error("Stream yielded nothing for query=%s", query[:100])
+    if not has_content:
+        logger.error(
+            "LLM stream returned empty response: query=%s, provider=%s",
+            query[:100], model_provider,
+        )
         raise ValueError("AI returned empty response")
 
 async def get_all_documents(skip: int = 0, limit: int = 10) -> list[dict]:
@@ -512,7 +516,10 @@ async def generate_enhanced_response(
     response_text = await rag_chain.ainvoke(query)
 
     if not response_text or not response_text.strip():
-        logger.error("AI returned empty response for query=%s", query[:100])
+        logger.error(
+            "LLM returned empty response: query=%s, provider=%s",
+            query[:100], model_provider,
+        )
         raise ValueError("AI returned empty response")
 
     return EnhancedChatResponse(
