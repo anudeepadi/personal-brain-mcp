@@ -51,6 +51,19 @@ export type ChatResponse = ApiResult<ChatResponseData>;
 export type MemoryStoreResult = ApiResult<MemoryStoreResultData>;
 export type SearchResult = ApiResult<readonly SearchResultItem[]>;
 
+export type ChatStreamSuccess = {
+  readonly ok: true;
+  readonly stream: ReadableStream<string>;
+  readonly abort: () => void;
+};
+
+export type ChatStreamError = {
+  readonly ok: false;
+  readonly error: ApiError;
+};
+
+export type ChatStreamResult = ChatStreamSuccess | ChatStreamError;
+
 // ── Error mapping ────────────────────────────────────────────────────
 
 function mapHttpError(status: number): ApiError {
@@ -79,8 +92,7 @@ function networkError(err: unknown): ApiError {
   return {
     code: "NETWORK_ERROR",
     status: 0,
-    message:
-      err instanceof Error ? err.message : "Network connection failed.",
+    message: err instanceof Error ? err.message : "Network connection failed.",
   };
 }
 
@@ -191,6 +203,105 @@ export async function searchMemories(
     }));
 
     return { ok: true, data };
+  } catch (err) {
+    return { ok: false, error: networkError(err) };
+  }
+}
+
+/**
+ * Stream a chat response via SSE.
+ * POST /api/chat with FormData (query + model_provider).
+ * Returns a ReadableStream<string> that yields text chunks.
+ */
+export async function fetchChatStream(
+  query: string,
+  modelProvider: string = "gemini",
+): Promise<ChatStreamResult> {
+  const controller = new AbortController();
+
+  try {
+    const formData = new FormData();
+    formData.append("query", query);
+    formData.append("model_provider", modelProvider);
+
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      body: formData,
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      return { ok: false, error: mapHttpError(res.status) };
+    }
+
+    if (!res.body) {
+      return {
+        ok: false,
+        error: {
+          code: "SERVER_ERROR",
+          status: 200,
+          message: "Response body is empty.",
+        },
+      };
+    }
+
+    // Transform the raw byte stream into parsed SSE text chunks
+    const textStream = new ReadableStream<string>({
+      async start(streamController) {
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        try {
+          let readerDone = false;
+          while (!readerDone) {
+            const { done, value } = await reader.read();
+            readerDone = done;
+
+            if (value) {
+              buffer += decoder.decode(value, { stream: true });
+
+              // Process complete SSE lines from buffer
+              const lines = buffer.split("\n");
+              // Keep the last (possibly incomplete) line in the buffer
+              buffer = lines.pop() ?? "";
+
+              for (const line of lines) {
+                const trimmed = line.trim();
+                if (trimmed.startsWith("data: ")) {
+                  const data = trimmed.slice(6);
+                  if (data === "[DONE]") {
+                    streamController.close();
+                    return;
+                  }
+                  streamController.enqueue(data);
+                }
+              }
+            }
+          }
+
+          // Process any remaining buffer content
+          if (buffer.trim().startsWith("data: ")) {
+            const data = buffer.trim().slice(6);
+            if (data !== "[DONE]") {
+              streamController.enqueue(data);
+            }
+          }
+
+          streamController.close();
+        } catch (err) {
+          if ((err as Error).name !== "AbortError") {
+            streamController.error(err);
+          }
+        }
+      },
+    });
+
+    return {
+      ok: true,
+      stream: textStream,
+      abort: () => controller.abort(),
+    };
   } catch (err) {
     return { ok: false, error: networkError(err) };
   }
