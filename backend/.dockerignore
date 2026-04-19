@@ -1,0 +1,6 @@
+env/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+mcp_server.log

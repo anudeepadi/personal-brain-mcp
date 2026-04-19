@@ -1,0 +1,8 @@
+node_modules/
+.next/
+.git/
+backend/
+*.md
+.claude/
+.env*
+Mnemonic-*.docx
