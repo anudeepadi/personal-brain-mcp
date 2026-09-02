@@ -1,64 +1,33 @@
-# Personal Brain - Modern Next.js UI
+# Personal Brain - Next.js Frontend
 
-A beautiful, modern frontend for the Personal Brain MCP application built with Next.js 15, TypeScript, Tailwind CSS, and shadcn/ui components.
+A beautiful, modern frontend for the Personal Brain MCP application built with Next.js 16, React 19, TypeScript, Tailwind CSS 4, and shadcn/ui components.
 
-## 🎨 Design Philosophy
+> **Portfolio Demo Ready**: Optimized for Vercel deployment with graceful offline modes and security hardening.
 
-### Modern Stack
-- **Next.js 15**: Latest React framework with App Router
-- **TypeScript**: Type-safe development
-- **Tailwind CSS 4**: Utility-first CSS framework
-- **shadcn/ui**: High-quality, accessible component library
-- **Framer Motion**: Smooth animations and transitions
-- **Lucide React**: Beautiful icon library
+## ✨ Features
 
-### Design Inspired By
-- **Apple**: Minimalist design, glass morphism, spacious layouts
-- **OpenAI/Anthropic**: Modern AI website aesthetics
-- **Perplexity**: Clean, focused interfaces
+- **🎭 Modern UI**: Glass morphism effects, smooth Framer Motion animations
+- **📱 Fully Responsive**: Mobile-first design with Tailwind CSS 4
+- **♿ Accessible**: Built on Radix UI primitives with WCAG AA standards
+- **⚡ Production Optimized**: Static generation, Turbopack builds
+- **🔒 Security Hardened**: No secrets in client bundle, secure headers
+- **🌙 Dark Mode Ready**: Pre-configured theme system
 
-## 🚀 Features
-
-### Component Library
-Built with shadcn/ui components:
-- Button, Card, Input, Textarea, Tabs
-- Fully accessible with Radix UI primitives
-- Customizable with Tailwind CSS
-- Type-safe with TypeScript
-
-### Sections
-1. **Hero Section**: Animated landing with gradient text and floating cards
-2. **Features Grid**: Showcase of key capabilities
-3. **Chat Interface**: AI-powered chat with model selection
-4. **Document Management**: Upload and view documents
-5. **Semantic Search**: Advanced search functionality
-
-### Key Features
-- 🎭 Glass morphism effects
-- 🌊 Smooth animations with Framer Motion
-- 📱 Fully responsive design
-- 🎨 Beautiful gradient text effects
-- ⚡ Optimized performance
-- ♿ Accessible components
-- 🌙 Dark mode ready (configured)
-
-## 📦 Installation
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 18+ 
 - npm or yarn
 
-### Setup
+### Local Development
 
 ```bash
-# Navigate to the frontend directory
-cd frontend-next
-
 # Install dependencies
 npm install
 
 # Run development server
 npm run dev
+# Open http://localhost:3000
 
 # Build for production
 npm run build
@@ -66,6 +35,17 @@ npm run build
 # Start production server
 npm start
 ```
+
+### Environment Variables
+
+Create a `.env.local` file (optional, only if customizing API endpoint):
+
+```bash
+# Optional: Override default API proxy
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+**Important**: Never commit `.env.local` or any file containing secrets. The frontend is designed to work standalone as a static demo without backend dependencies.
 
 ## 🏗️ Project Structure
 
@@ -195,24 +175,66 @@ extend: {
 }
 ```
 
-## 🚀 Deployment
+## 🚀 Deploy to Vercel
 
-### Vercel (Recommended)
-```bash
-# Install Vercel CLI
-npm i -g vercel
+### One-Click Deploy
 
-# Deploy
-vercel
-```
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/anudeepadi/personal-brain-mcp&project-name=personal-brain-frontend&root-directory=frontend-next)
+
+### Manual Deploy
+
+1. **Install Vercel CLI**
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Login to Vercel**
+   ```bash
+   vercel login
+   ```
+
+3. **Deploy from frontend-next directory**
+   ```bash
+   cd frontend-next
+   vercel
+   ```
+
+4. **Configure Environment (Optional)**
+   - In Vercel Dashboard → Settings → Environment Variables
+   - Add `NEXT_PUBLIC_API_URL` if connecting to a backend API
+   - Update `vercel.json` rewrites with your backend URL
+
+5. **Deploy to Production**
+   ```bash
+   vercel --prod
+   ```
+
+### Required Configuration
+
+The included `vercel.json` provides:
+- ✅ Next.js framework detection
+- ✅ Security headers (CSP, XSS protection)
+- ✅ API proxy configuration (update destination URL)
+
+**Before deploying**: Edit `vercel.json` and replace `https://your-backend-api.com` with your actual backend API URL, or remove the rewrites section to deploy as a static demo.
+
+### Vercel Environment Variables
+
+Set these in Vercel Dashboard (if needed):
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_API_URL` | Backend API URL | No (uses proxy by default) |
 
 ### Other Platforms
-Build the application:
+
+For deployment to Netlify, Cloudflare Pages, or AWS Amplify:
+
 ```bash
 npm run build
 ```
 
-Then deploy the `.next` folder to your preferred hosting platform.
+Deploy the `.next` folder following your platform's Next.js deployment guide.
 
 ## 🔧 Development
 
@@ -273,15 +295,35 @@ Contributions welcome! Please follow the existing code style and component patte
 
 MIT
 
-## 🎯 Future Enhancements
+## 🛡️ Security & Production Notes
 
-- [ ] Implement actual API calls
-- [ ] Add loading states
-- [ ] Implement error handling
-- [ ] Add dark mode toggle
-- [ ] Create more page routes
-- [ ] Add authentication
-- [ ] Implement real-time updates
-- [ ] Add progressive web app features
-- [ ] Optimize images with next/image
-- [ ] Add E2E tests
+### Client Bundle Safety
+- ✅ No API keys or secrets in client code
+- ✅ Environment variables properly prefixed with `NEXT_PUBLIC_*`
+- ✅ Security headers configured in `vercel.json`
+- ✅ No server-side secrets exposed to browser
+
+### Graceful Degradation
+The demo frontend works standalone without a backend:
+- Empty states for all sections
+- No API calls in initial page load
+- Interactive UI without backend dependencies
+- Ready for integration when backend is available
+
+### What's Included
+- ✅ Production-optimized build configuration
+- ✅ TypeScript strict mode enabled
+- ✅ Tailwind CSS 4 with PostCSS plugin
+- ✅ Responsive design (mobile-first)
+- ✅ Accessible components (WCAG AA)
+- ✅ SEO metadata configured
+
+## 🎯 Roadmap
+
+- [ ] Implement actual API calls with loading states
+- [ ] Add error handling and retry logic
+- [ ] Dark mode toggle component
+- [ ] Authentication flow
+- [ ] Real-time updates via WebSocket
+- [ ] Progressive Web App features
+- [ ] E2E tests with Playwright
