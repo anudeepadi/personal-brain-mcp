@@ -51,10 +51,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -71,15 +72,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-muted/20;
+  background: hsl(var(--muted) / 0.2);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-full;
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/50;
+  background: hsl(var(--muted-foreground) / 0.5);
 }
 
 /* Glass morphism effect */
@@ -97,5 +99,9 @@
 
 /* Gradient text */
 .gradient-text {
-  @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
