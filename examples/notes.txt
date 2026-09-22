@@ -1,0 +1,6 @@
+Example architecture decisions
+
+This is synthetic sample content for a ContextOS ingestion check.
+We keep the prototype API bound to localhost.
+We store document vectors in a dedicated test index.
+Before changing the embedding model, we verify dimensions and plan reindexing.

@@ -1,8 +1,14 @@
-include README.md
-include .env.example
-include requirements.txt
-include CLAUDE.md
-include claude_desktop_config.json
+include README.md LICENSE .env.example requirements.txt pyproject.toml uv.lock
+include CHANGELOG.md CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md ROADMAP.md
+include main.py services.py models.py config.py
 recursive-include personal_brain_mcp *.py
-global-exclude __pycache__
-global-exclude *.py[co]
+recursive-include frontend *.html *.css *.js
+recursive-include docs *.md *.svg *.png *.example
+recursive-include examples *.json *.txt
+recursive-include scripts *.py
+recursive-include tests *.py
+prune dist
+prune personal_brain_mcp.egg-info
+prune npm-package
+prune personal-brain-mcp
+global-exclude __pycache__ *.py[cod] .env *.log

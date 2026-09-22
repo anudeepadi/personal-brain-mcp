@@ -40,3 +40,9 @@ Thumbs.db
 .env
 .env.local
 .env*.local
+
+# Generated previews and local runtime files
+output/
+.playwright-cli/
+.pytest_cache/
+*.log

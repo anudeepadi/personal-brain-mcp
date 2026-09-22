@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "contextos": {
+      "command": "/absolute/path/to/uv",
+      "args": ["--directory", "/absolute/path/to/personal-brain-mcp", "run", "personal-brain-mcp"]
+    }
+  }
+}

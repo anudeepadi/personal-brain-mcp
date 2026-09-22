@@ -1,23 +1,21 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=77.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "personal-brain-mcp"
-version = "1.0.0"
-description = "MCP Server for Personal Brain API - provides semantic search and archival capabilities for documents and chat sessions"
+version = "1.0.1"
+description = "ContextOS: document retrieval and conversation memory through MCP and FastAPI"
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
-    {name = "Personal Brain MCP", email = "noreply@example.com"}
+    {name = "Anudeep Adiraju"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -25,13 +23,15 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 keywords = ["mcp", "claude", "ai", "semantic-search", "rag", "knowledge-base"]
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
     "python-dotenv",
     "pydantic-settings",
-    "langchain",
+    "langchain-text-splitters",
+    "python-multipart",
+    "audioop-lts; python_version >= '3.13'",
     "langchain-google-genai",
     "langchain-pinecone",
     "pinecone",
@@ -42,7 +42,7 @@ dependencies = [
     "Pillow",
     "SpeechRecognition",
     "pydub",
-    "mcp",
+    "mcp>=1,<2",
 ]
 
 [project.optional-dependencies]
@@ -61,6 +61,8 @@ personal-brain-mcp = "personal_brain_mcp.server:main"
 Homepage = "https://github.com/anudeepadi/personal-brain-mcp"
 Repository = "https://github.com/anudeepadi/personal-brain-mcp"
 Issues = "https://github.com/anudeepadi/personal-brain-mcp/issues"
+Documentation = "https://github.com/anudeepadi/personal-brain-mcp/blob/main/docs/SETUP.md"
+Changelog = "https://github.com/anudeepadi/personal-brain-mcp/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -68,3 +70,7 @@ include = ["personal_brain_mcp*"]
 
 [tool.setuptools.package-data]
 personal_brain_mcp = ["*.md", "*.json", "*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
