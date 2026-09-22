@@ -1,4 +1,4 @@
-ContextX — Organizational Memory
+ContextOS
 OFFLINE SYNTHETIC WALKTHROUGH | personal_brain_mcp.services
 Storage: temporary in-memory adapter | Ranking: word overlap | Network: blocked
 

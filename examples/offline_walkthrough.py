@@ -79,7 +79,7 @@ async def walkthrough(module_name):
     services.embeddings = object()
     services.vectorstore = LocalStore()
     services.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    print("ContextX — Organizational Memory")
+    print("ContextOS")
     print(f"OFFLINE SYNTHETIC WALKTHROUGH | {module_name}")
     print("Storage: temporary in-memory adapter | Ranking: word overlap | Network: blocked")
     print()

@@ -1,0 +1,26 @@
+name: Bug report
+description: Report a reproducible problem with ContextOS.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Remove API keys and private prompt content. For vulnerabilities, see SECURITY.md."
+  - type: input
+    id: version
+    attributes:
+      label: Version and environment
+      description: ContextOS version or commit, Python version, OS, and relevant MCP client version.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Command, minimal synthetic input, expected behavior, and actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized error output
+      render: text
