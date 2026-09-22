@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="458" viewBox="0 0 1080 458">
+<title>ContextOS offline synthetic walkthrough — captured terminal transcript</title>
+<rect width="1080" height="100%" rx="12" fill="#152925"/>
+<text x="30" y="36" font-family="monospace" font-size="15" fill="#9ccebd">CAPTURED TERMINAL TRANSCRIPT · LOCAL SYNTHETIC DATA · 22 SEP 2026</text>
+<text x="30" y="78" font-family="monospace" font-size="16" fill="#b1e3d1" xml:space="preserve">ContextOS</text>
+<text x="30" y="101" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">OFFLINE SYNTHETIC WALKTHROUGH | personal_brain_mcp.services</text>
+<text x="30" y="124" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">Storage: temporary in-memory adapter | Ranking: word overlap | Network: blocked</text>
+<text x="30" y="147" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve"></text>
+<text x="30" y="170" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">1. Ingested 2 synthetic project notes through process_and_store_enhanced.</text>
+<text x="30" y="193" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">2. Retrieved: Project Aurora decision: weekly planning happens on Tuesday. Owner: Sam.</text>
+<text x="30" y="216" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">   Source: aurora-synthetic.txt, chunk 0</text>
+<text x="30" y="239" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">   The application&#x27;s 0.85 relevance value is a placeholder, not a measured score.</text>
+<text x="30" y="262" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">3. Saved and recalled 2 messages by chat ID.</text>
+<text x="30" y="285" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">   Preview: user: When is Aurora planning?</text>
+<text x="30" y="308" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">assistant: Tuesday, according to aurora-synthetic.txt.</text>
+<text x="30" y="331" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">   Titles are not persisted by the current archive path; recall uses a fallback title.</text>
+<text x="30" y="354" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">4. A missing chat ID returned no results.</text>
+<text x="30" y="377" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve"></text>
+<text x="30" y="400" font-family="monospace" font-size="16" fill="#b1e3d1" xml:space="preserve">PASS: ingest, source references, chat recall, and missing-ID behavior.</text>
+<text x="30" y="423" font-family="monospace" font-size="16" fill="#edf3ef" xml:space="preserve">Not tested: provider embeddings, Pinecone, generated answers, OCR/audio, or MCP transport.</text>
+</svg>

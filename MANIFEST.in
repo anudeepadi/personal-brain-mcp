@@ -3,8 +3,8 @@ include CHANGELOG.md CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md ROADMAP.md
 include main.py services.py models.py config.py
 recursive-include personal_brain_mcp *.py
 recursive-include frontend *.html *.css *.js
-recursive-include docs *.md *.svg *.png *.example
-recursive-include examples *.json *.txt
+recursive-include docs *.md *.svg *.png *.example *.txt
+recursive-include examples *.json *.txt *.py *.svg
 recursive-include scripts *.py
 recursive-include tests *.py
 prune dist
