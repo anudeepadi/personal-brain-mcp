@@ -1,8 +1,10 @@
 fastapi
 uvicorn[standard]
 python-dotenv
+python-multipart
 pydantic-settings
 langchain
+langchain-text-splitters
 langchain-google-genai
 langchain-pinecone
 pinecone # <-- This is the corrected line
@@ -19,4 +21,4 @@ SpeechRecognition
 pydub
 
 # For MCP server
-mcp
+mcp>=1,<2

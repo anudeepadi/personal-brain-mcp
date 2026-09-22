@@ -5,18 +5,16 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "personal-brain-mcp"
 version = "1.0.0"
-description = "MCP Server for Personal Brain API - provides semantic search and archival capabilities for documents and chat sessions"
+description = "ContextX — Organizational Memory: document retrieval and conversation memory through MCP"
 readme = "README.md"
 license = "MIT"
 authors = [
-    {name = "Personal Brain MCP", email = "noreply@example.com"}
+    {name = "Anudeep Adiraju"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -25,13 +23,15 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 keywords = ["mcp", "claude", "ai", "semantic-search", "rag", "knowledge-base"]
-requires-python = ">=3.8"
+requires-python = ">=3.10,<3.13"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
     "python-dotenv",
+    "python-multipart",
     "pydantic-settings",
     "langchain",
+    "langchain-text-splitters",
     "langchain-google-genai",
     "langchain-pinecone",
     "pinecone",
@@ -42,7 +42,7 @@ dependencies = [
     "Pillow",
     "SpeechRecognition",
     "pydub",
-    "mcp",
+    "mcp>=1,<2",
 ]
 
 [project.optional-dependencies]

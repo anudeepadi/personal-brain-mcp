@@ -15,7 +15,7 @@ import PyPDF2
 
 # LangChain components
 from langchain_core.documents import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_pinecone import PineconeVectorStore
 from langchain_anthropic import ChatAnthropic
@@ -194,7 +194,7 @@ async def search_archived_chats(query: str, tool: str | None, tags: str | None, 
     retriever = vectorstore.as_retriever(
         search_kwargs={'k': top_k, 'filter': search_filter}
     )
-    return await retriever.aget_relevant_documents(query)
+    return await retriever.ainvoke(query)
 
 async def search_archived_chats_enhanced(query: str, tool: str | None, tags: str | None, top_k: int = 5, include_references: bool = True) -> list[SearchResult]:
     """Enhanced search with proper referencing and scoring."""
@@ -244,7 +244,7 @@ async def search_documents_enhanced(query: str, content_type: str | None, filena
     retriever = vectorstore.as_retriever(
         search_kwargs={'k': top_k, 'filter': search_filter}
     )
-    docs = await retriever.aget_relevant_documents(query)
+    docs = await retriever.ainvoke(query)
     
     results = []
     for doc in docs:
@@ -319,7 +319,7 @@ async def get_all_documents(skip: int = 0, limit: int = 10) -> list[dict]:
         search_kwargs={'k': limit, 'filter': {"type": "document"}}
     )
     # For now, we'll do a generic search to get documents
-    docs = await retriever.aget_relevant_documents("*")
+    docs = await retriever.ainvoke("*")
     
     # Group by document_id to avoid duplicates
     doc_map = {}
@@ -341,7 +341,7 @@ async def get_document_with_chunks(document_id: str) -> dict | None:
     retriever = vectorstore.as_retriever(
         search_kwargs={'k': 100, 'filter': {"document_id": {"$eq": document_id}}}
     )
-    docs = await retriever.aget_relevant_documents("*")
+    docs = await retriever.ainvoke("*")
     
     if not docs:
         return None
@@ -375,7 +375,7 @@ async def generate_enhanced_response(query: str, model_provider: Literal["gemini
 
     # Get relevant documents
     retriever = vectorstore.as_retriever(search_kwargs={'k': 5, 'filter': {"type": "document"}})
-    docs = await retriever.aget_relevant_documents(query)
+    docs = await retriever.ainvoke(query)
     
     # Create references
     references = []
@@ -696,7 +696,7 @@ async def retrieve_chat_conversations(
         retriever = vectorstore.as_retriever(
             search_kwargs={'k': limit, 'filter': search_filter}
         )
-        docs = await retriever.aget_relevant_documents(f"session_id:{chat_id}")
+        docs = await retriever.ainvoke(f"session_id:{chat_id}")
     else:
         # Search by title pattern or tags
         search_query = title_pattern or "saved chat conversation"
@@ -712,7 +712,7 @@ async def retrieve_chat_conversations(
         retriever = vectorstore.as_retriever(
             search_kwargs={'k': limit, 'filter': search_filter}
         )
-        docs = await retriever.aget_relevant_documents(search_query)
+        docs = await retriever.ainvoke(search_query)
     
     # Group by session_id and return unique chats
     chats_dict = {}
@@ -752,7 +752,7 @@ async def get_saved_chats_list(skip: int = 0, limit: int = 20, tags: list[str] =
     retriever = vectorstore.as_retriever(
         search_kwargs={'k': limit + skip + 50, 'filter': search_filter}  # Get more to account for duplicates
     )
-    docs = await retriever.aget_relevant_documents("chat conversation")
+    docs = await retriever.ainvoke("chat conversation")
     
     # Group by session_id to get unique chats
     chats_dict = {}
@@ -797,7 +797,7 @@ async def delete_saved_chat(chat_id: str) -> bool:
         retriever = vectorstore.as_retriever(
             search_kwargs={'k': 100, 'filter': search_filter}
         )
-        docs = await retriever.aget_relevant_documents(f"session_id:{chat_id}")
+        docs = await retriever.ainvoke(f"session_id:{chat_id}")
         
         if not docs:
             return False

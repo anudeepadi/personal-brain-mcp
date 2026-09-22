@@ -32,7 +32,7 @@ from services import (
 )
 
 app = FastAPI(
-    title="Multimodal RAG & Personal Brain API",
+    title="Multimodal RAG & ContextX API",
     description="An API for uploading files and archiving chat sessions to a vector store for semantic search and retrieval.",
     version="2.0.0"
 )
@@ -57,12 +57,12 @@ def root():
     index_path = Path(__file__).parent / "frontend" / "index.html"
     if index_path.exists():
         return FileResponse(str(index_path))
-    return {"status": "ok", "message": "Welcome to your Personal Brain API!"}
+    return {"status": "ok", "message": "Welcome to your ContextX API!"}
 
 @app.get("/api/health", summary="Check API status")
 def health():
     """Health check endpoint."""
-    return {"status": "ok", "message": "Personal Brain API is running!"}
+    return {"status": "ok", "message": "ContextX API is running!"}
 
 
 @app.post("/archive/chat", summary="Archive a chat session")

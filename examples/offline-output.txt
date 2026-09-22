@@ -1,0 +1,16 @@
+ContextX — Organizational Memory
+OFFLINE SYNTHETIC WALKTHROUGH | personal_brain_mcp.services
+Storage: temporary in-memory adapter | Ranking: word overlap | Network: blocked
+
+1. Ingested 2 synthetic project notes through process_and_store_enhanced.
+2. Retrieved: Project Aurora decision: weekly planning happens on Tuesday. Owner: Sam.
+   Source: aurora-synthetic.txt, chunk 0
+   The application's 0.85 relevance value is a placeholder, not a measured score.
+3. Saved and recalled 2 messages by chat ID.
+   Preview: user: When is Aurora planning?
+assistant: Tuesday, according to aurora-synthetic.txt.
+   Titles are not persisted by the current archive path; recall uses a fallback title.
+4. A missing chat ID returned no results.
+
+PASS: ingest, source references, chat recall, and missing-ID behavior.
+Not tested: provider embeddings, Pinecone, generated answers, OCR/audio, or MCP transport.
