@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>ContextX — find the line a passage came from</title>
+  <meta name="description" content="A browser-local demo of ContextX source citations: word-overlap retrieval over two synthetic notes, with file, chunk and line references.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script src="demo.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#query">Skip to query</a>
+
+  <header class="masthead">
+    <p class="brand"><span class="mark" aria-hidden="true">[≡]</span> ContextX</p>
+    <h1>Ask a question. Get the passage <em>and</em> the line it came from.</h1>
+    <p class="lede">ContextX is an MCP server and REST API for document retrieval and saved conversations. This page shows its citation shape on two invented notes, entirely in your browser.</p>
+    <nav aria-label="Project links">
+      <a href="https://github.com/anudeepadi/personal-brain-mcp">Source on GitHub</a>
+      <a href="https://www.heyadi.dev/work/contextx">Case study</a>
+    </nav>
+  </header>
+
+  <main class="desk">
+    <section class="lookup" aria-labelledby="lookup-title">
+      <h2 id="lookup-title">Query</h2>
+      <form id="query-form" class="query">
+        <label for="query">Search the two notes</label>
+        <div class="query-row">
+          <input id="query" name="q" type="search" autocomplete="off" spellcheck="false" value="Aurora weekly planning">
+          <button type="submit">Retrieve</button>
+        </div>
+      </form>
+      <div class="tries">
+        <p id="tries-label">Try</p>
+        <ul aria-labelledby="tries-label">
+          <li><button type="button" data-query="release color">release color</button></li>
+          <li><button type="button" data-query="who owns planning">who owns planning</button></li>
+          <li><button type="button" data-query="budget meeting">budget meeting</button></li>
+        </ul>
+      </div>
+
+      <h2 id="results-title">Retrieved</h2>
+      <p id="status" class="status" role="status"></p>
+      <div id="results" class="results"></div>
+
+      <aside class="method" aria-labelledby="method-title">
+        <h2 id="method-title">What runs here, and what doesn't</h2>
+        <p><strong>Here:</strong> the ranking from the repository's <a href="https://github.com/anudeepadi/personal-brain-mcp/blob/main/examples/offline_walkthrough.py">offline walkthrough</a> adapter, ported to JavaScript. Query and notes are split into lowercase words; each note is ranked by how many distinct query words it contains. Every word counts, including “the”. Nothing is sent anywhere.</p>
+        <p><strong>In ContextX:</strong> uploaded text is chunked (1,000 characters, 100 overlap), embedded by a Google model, stored in Pinecone and retrieved by vector similarity; answers come from an LLM. None of that runs on this page, so paraphrases like “meeting” for “planning” won’t match here.</p>
+        <p><strong>Differences:</strong> this page hides notes with no shared words (the fixture returns its top results regardless) and quotes the best-matching line, where the service's reference quotes the chunk's first 200 characters.</p>
+      </aside>
+    </section>
+
+    <section class="sources" aria-labelledby="sources-title">
+      <h2 id="sources-title">Sources</h2>
+      <p class="sources-note">Synthetic notes. Matched words are marked; a citation link jumps to its line.</p>
+      <div id="source-list"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>ContextX demo · repository <code>personal-brain-mcp</code> · MIT · Preview project; provider-backed retrieval needs live validation.</p>
+  </footer>
+</body>
+</html>

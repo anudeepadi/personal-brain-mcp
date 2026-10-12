@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="docs/assets/hero-light.svg">
-    <img src="docs/assets/hero-light.svg" alt="ContextOS — your context, within reach. Save the conversation. Find the source." width="100%">
+    <img src="docs/assets/hero-light.svg" alt="ContextX — your context, within reach. Save the conversation. Find the source." width="100%">
   </picture>
 </p>
 
@@ -26,15 +26,16 @@
 
 ---
 
-Important context is spread across documents and conversations. **ContextOS gives that material a retrieval layer.** Upload a file, save a discussion, or import a chat export. Search the stored passages and ask questions with document references through an MCP client or the REST API.
+Important context is spread across documents and conversations. **ContextX gives that material a retrieval layer.** Upload a file, save a discussion, or import a chat export. Search the stored passages and ask questions with document references through an MCP client or the REST API.
 
-**ContextOS is the project identity.** The GitHub repository, Python distribution, and executable retain the name `personal-brain-mcp` for compatibility. It is an MCP server plus a FastAPI application; it is not an operating system or an automatic recorder of every conversation.
+**ContextX is the project identity.** The GitHub repository, Python distribution, and executable retain the name `personal-brain-mcp` for compatibility. It is an MCP server plus a FastAPI application; it is not an operating system or an automatic recorder of every conversation.
 
 ## Choose your entry point
 
 | You want to… | Start here |
 |---|---|
 | Try retrieval and chat recall without provider accounts | [Offline walkthrough](#try-the-local-walkthrough) |
+| See source citations in a browser, with nothing to install | [Public browser demo](#public-browser-demo) |
 | Give an MCP-compatible assistant access to saved knowledge | [MCP setup](docs/SETUP.md#mcp-client-configuration) |
 | Upload documents and query them over HTTP | [REST quickstart](#run-the-api-and-connected-ui) |
 | Understand the storage and provider boundaries | [Architecture](docs/ARCHITECTURE.md) |
@@ -60,6 +61,12 @@ The walkthrough exercises the **actual service functions** for chunking, metadat
 See the [complete captured run](examples/offline-output.txt) and [runnable source](examples/offline_walkthrough.py). The image renders that terminal output; it is not a screenshot of a deployed UI. To exercise the separate HTTP service implementation with the same assertions, run `uv run --locked python examples/offline_walkthrough.py --entry http`.
 
 The [dependency snapshot](docs/tested-constraints.txt) records the Python 3.12 environment used on 22 September 2026. The maintained installation resolves from `uv.lock`; the snapshot does not override it. These checks verify installation and local service behavior, not current provider models or production readiness.
+
+## Public browser demo
+
+[`portfolio-demo/`](portfolio-demo/) is a standalone static page, shown under the portfolio name **ContextX** ([case study](https://www.heyadi.dev/work/contextx)). It ports the walkthrough adapter's word-overlap ranking to JavaScript and runs it over two synthetic notes. You can query them, follow a file · chunk · line citation into the source pane, edit one note, and rerun. A query that shares no words with either note shows an empty state.
+
+It has no build step, dependencies, or network requests, and its Content-Security-Policy sets `connect-src 'none'`. It does not use embeddings, Pinecone, or an LLM, and it shows matched-word counts rather than relevance scores. Unlike the Python fixture, it hides notes with zero overlap. To view it locally, run `python -m http.server -d portfolio-demo` and open http://127.0.0.1:8000 (some browsers block `file://` scripts under its CSP). Design notes are in [`portfolio-demo/DESIGN.md`](portfolio-demo/DESIGN.md).
 
 ## Quickstart
 
@@ -108,7 +115,7 @@ curl --get --data-urlencode 'q=architecture decisions' \
 
 The API currently has no authentication and allows broad CORS. Bind it to localhost; add access controls before hosting it for others. See [security and data handling](SECURITY.md).
 
-## What ContextOS does
+## What ContextX does
 
 <p align="center"><img src="docs/assets/workflow.svg" alt="Capture documents and chats, embed their text, retrieve passages, then use the results through MCP or REST." width="100%"></p>
 
@@ -151,7 +158,7 @@ Older `npm-package/` and nested `personal-brain-mcp/` trees are historical packa
 
 ## Current status
 
-ContextOS is a **preview**. Live provider compatibility, ingestion quality, and retrieval quality need further validation. Knowledge-graph search, local embeddings, automatic sync, and multi-user authentication are roadmap items, not current capabilities.
+ContextX is a **preview**. Live provider compatibility, ingestion quality, and retrieval quality need further validation. Knowledge-graph search, local embeddings, automatic sync, and multi-user authentication are roadmap items, not current capabilities.
 
 The two current service copies use the modern LangChain splitter import and `ainvoke` retriever method; both are exercised by the local walkthrough.
 

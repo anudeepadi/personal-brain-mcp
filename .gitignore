@@ -46,3 +46,6 @@ output/
 .playwright-cli/
 .pytest_cache/
 *.log
+
+.vercel/
+audit-production.json

@@ -1,6 +1,6 @@
-# ContextOS identity
+# ContextX identity
 
-**ContextOS** is the display name. **Keep the thread.** is the tagline.
+**ContextX** is the display name. **Keep the thread.** is the tagline.
 The repository, distribution, Python import, and command retain their existing names:
 `personal-brain-mcp`, `personal_brain_mcp`, and `personal-brain-mcp` respectively.
 
